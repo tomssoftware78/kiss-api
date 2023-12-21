@@ -18,9 +18,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from typing_extensions import Annotated
-
+from contextlib import asynccontextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
+from socket import socket
+from kissutils import database_instance
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -63,9 +65,17 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database_instance.connect()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.ssh_connection = None
 app.ssh_forward_ctx = None
+
+
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -238,12 +248,13 @@ def clear_connection():
 
 
 def ensure_connection():
-    if app.ssh_connection == None or not app.ssh_connection.is_connected:
-        app.ssh_connection = Connection(connection_ssh_jump)
-        app.ssh_forward_ctx = app.ssh_connection.forward_local(local_port=connection_local_port, remote_port=connection_kiss_port, remote_host=connection_kiss_ip, local_host="127.0.0.1")
-        app.ssh_forward_ctx.__enter__()
-        print("after creation")
-        time.sleep(1)
+    #if app.ssh_connection == None or not app.ssh_connection.is_connected:
+    app.ssh_connection = Connection(connection_ssh_jump)
+    app.ssh_forward_ctx = app.ssh_connection.forward_local(local_port=connection_local_port, remote_port=connection_kiss_port, remote_host=connection_kiss_ip, local_host="127.0.0.1")
+    app.ssh_forward_ctx.__enter__()
+    print("after creation")
+    time.sleep(1)
+    clear_connection()
 
 @app.get("/case/{case_id}", response_model=KissCase)
 def get_kiss_case(current_user: Annotated[User, Depends(get_current_active_user)], case_id: int, badge_id: int):
@@ -265,28 +276,34 @@ def search_kiss_case(current_user: Annotated[User, Depends(get_current_active_us
     print("TODO")
     return []
 
-@app.get("/user/{badge_id}", response_model=KissUser)
-def get_kiss_user(current_user: Annotated[User, Depends(get_current_active_user)], badge_id: int):
-    ensure_connection()
-    connection_string = "127.0.0.1:" + str(connection_local_port) + "/" + connection_kiss_schema
+def retrier(counter, func, args):
     try:
-        connection = iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
-        print("connected")
-        cursor = connection.cursor()
-        cursor.execute("SELECT g.Stamnummer AS badgeid, g.Naam AS lastname, g.Voornaam AS firstname, "
-                       "g.Paswoord AS email, e.naam AS unit, g.idTeam->beschrijving AS division FROM kiss.tblGebruikers g LEFT JOIN kiss.piceenheden e ON (g.IdEenheid = e.id) WHERE Stamnummer = " + str(badge_id))
-
-        for row in cursor.fetchall():
-            print(str(row))
-            unit = row[5]
-            superuser = (unit == 'RCCU')
-            uuid = str(UUID('00000000000000000000000' + str(badge_id)))
-            return KissUser.custom_init(uuid, str(row[0]), row[2], row[1], row[3], unit, row[4], superuser, superuser, superuser, "NL", None, None)
-
+        return func(*args)
     except Exception as e:
-        print(str(e))
-        clear_connection()
-        raise e
+        print("Retrier: " + str(counter) + " " + str(e))
+        if counter > 0:
+            time.sleep(1)
+            return retrier(counter-1, func, args)
+        else:
+            raise e
+
+def connect_to_iris(localport):
+    connection_string = "127.0.0.1:" + str(localport) + "/" + connection_kiss_schema
+    return iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
+
+
+@app.get("/user/{badge_id}", response_model=KissUser)
+async def get_kiss_user(current_user: Annotated[User, Depends(get_current_active_user)], badge_id: int):
+    result = database_instance.fetch_rows("SELECT g.Stamnummer AS badgeid, g.Naam AS lastname, g.Voornaam AS firstname, "
+                           "g.Paswoord AS email, e.naam AS unit, g.idTeam->beschrijving AS division FROM kiss.tblGebruikers g LEFT JOIN kiss.piceenheden e ON (g.IdEenheid = e.id) WHERE Stamnummer = " + str(badge_id))
+
+    for row in result:
+        print(str(row))
+        unit = row[5]
+        superuser = (unit == 'RCCU')
+        uuid = str(UUID('00000000000000000000000' + str(badge_id)))
+        return KissUser.custom_init(uuid, str(row[0]), row[2], row[1], row[3], unit, row[4], superuser, superuser,
+                                    superuser, "NL", None, None)
 
     raise HTTPException(status_code=404, detail="User " + str(badge_id) + " not found")
 
