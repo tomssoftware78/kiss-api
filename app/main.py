@@ -10,7 +10,7 @@ import iris
 from fabric import Connection
 from unidecode import unidecode
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Union
 
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -217,19 +217,19 @@ class KissUser(BaseModel):
 class KissItem(BaseModel):
     id: int
     number: str
-    sin: str
-    mark_model_str: str
-    type: str
-    operator_identity: str
-    pv_number: str
+    sin: Union[str, None]
+    mark_model_str: Union[str, None]
+    type: Union[str, None]
+    operator_identity: Union[str, None]
+    pv_number: Union[str, None]
     urgent: bool
-    date_in: datetime
-    date_end: datetime
-    date_out: datetime
+    date_in: date
+    date_end: date
+    date_out: date
 
     @classmethod
     def custom_init(cls, id: int, number: str, sin: str, mark_model_str: str, type: str, operator_identity: str,
-                    pv_number: str, urgent: bool, date_in: datetime, date_end: datetime, date_out: datetime):
+                    pv_number: str, urgent: bool, date_in: date, date_end: date, date_out: date):
 
         return cls(id=id,
                    number=number,
@@ -258,26 +258,19 @@ def ensure_connection():
 
 @app.get("/case/{case_id}", response_model=KissCase)
 def get_kiss_case(current_user: Annotated[User, Depends(get_current_active_user)], case_id: int, badge_id: int):
-    print("TODO")
-    raise HTTPException(status_code=404, detail="case " + str(case_id) + " not found for " + str(badge_id))
+    term = ((str)(case_id))
+    term = term[0:2]+"/" + term[2:]
+    return search_kiss_case(current_user, term, badge_id)[0]
 
 def convertKissDetailToCaseID(detail):
-    return (int)(((str)(convertKissDetailToItemID(detail)))[:-3])
+    return (int)(re.sub(r'[^0-9]', '', detail)[:-3])
 
 def convertKissDetailToCaseName(detail):
     return detail.removeprefix("RCCU/")[:-4]
 
-def convertKissDetailToItemID(detail):
-    return (int)(re.sub(r'[^0-9]', '', detail))
-
 def convertCaseIDToKissDetail(id):
     caseId = ((str)(id))
     caseId = "RCCU/" + caseId[0:2]+"/" + caseId[2:6] + "/"
-    return caseId
-
-def convertItemIDToKissDetail(id):
-    caseId = ((str)(id))
-    caseId = "RCCU/" + caseId[0:2] + "/" + caseId[2:6] + "/" + caseId[6:9]
     return caseId
 
 @app.post("/case/search", response_model=list[KissCase])
@@ -304,7 +297,7 @@ def search_kiss_case(current_user: Annotated[User, Depends(get_current_active_us
 
     if check_limited_to_team(badge_id):
         teamId = str(get_team(badge_id))
-        query = query + "AND c.idRelatie->idgebeurtenis->idDocument->iddossier->idTeam = " + teamId
+        query = query + " AND c.idRelatie->idgebeurtenis->idDocument->iddossier->idTeam = " + teamId
 
     query = query + " ORDER BY id DESC"
     result = database_instance.fetch_rows(query)
@@ -318,20 +311,62 @@ def search_kiss_case(current_user: Annotated[User, Depends(get_current_active_us
             name = row[1]
             if name == "DOMEIN RCCU":
                 name = convertKissDetailToCaseName(row[0])
-            cases.append(KissCase.custom_init(caseId, name, None, None, None, None, None))
+            cases.append(KissCase.custom_init(caseId, name, row[2], row[3], row[4], row[5], row[6]))
             ids_processed.append(caseId)
 
     return cases
 
 @app.get("/items/{case_id}", response_model=list[KissItem])
 def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_active_user)], case_id: int, badge_id: int):
-    print("TODO")
-    return []
+    items = []
 
-@app.get("/items", response_model=list[KissItem])
+    query = "SELECT c.ID as id, c.IdDetail AS Number, c.reserv1 AS sin, c.merk->beschrijving AS mark_model_str, " \
+            "c.type AS type, {fn CONCAT({fn CONCAT(g.Voornaam, ' ')}, g.naam)} AS operator_identity, " \
+            "c.idRelatie->idgebeurtenis->idDocument->Docnr AS pv_number, c.prioriteit AS urgent, " \
+            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out " \
+            "FROM KISS.tblCCUdetail c LEFT JOIN Kiss.tblgebruikers g ON c.nagezienDoor = g.Stamnummer " \
+            "WHERE c.DatumOUT <> \"1900-01-01\" AND c.IdDetail like '" + convertCaseIDToKissDetail(case_id) + "%' "
+
+    if check_limited_to_team(badge_id):
+        teamId = str(get_team(badge_id))
+        query = query + " AND c.idRelatie->idgebeurtenis->idDocument->iddossier->idTeam = " + teamId
+
+    query = query + " ORDER BY id DESC"
+    result = database_instance.fetch_rows(query)
+
+    for row in result:
+        print(str(row))
+        items.append(KissItem.custom_init(row[0], row[1], row[2], row[3], row[4], row[5],
+                                          row[6], False, row[8], row[9], row[10]))
+
+    return items
+
+@app.post("/items", response_model=list[KissItem])
 def get_kiss_items(current_user: Annotated[User, Depends(get_current_active_user)], item_ids: list[int], badge_id: int):
-    print("TODO")
-    return []
+    items = []
+
+    string_list = ",".join(str(num) for num in item_ids)
+
+    query = "SELECT c.ID as id, c.IdDetail AS Number, c.reserv1 AS sin, c.merk->beschrijving AS mark_model_str, " \
+            "c.type AS type, {fn CONCAT({fn CONCAT(g.Voornaam, ' ')}, g.naam)} AS operator_identity, " \
+            "c.idRelatie->idgebeurtenis->idDocument->Docnr AS pv_number, c.prioriteit AS urgent, " \
+            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out " \
+            "FROM KISS.tblCCUdetail c LEFT JOIN Kiss.tblgebruikers g ON c.nagezienDoor = g.Stamnummer " \
+            "WHERE c.DatumOUT <> \"1900-01-01\" AND c.ID in (" + string_list + ") "
+
+    if check_limited_to_team(badge_id):
+        teamId = str(get_team(badge_id))
+        query = query + " AND c.idRelatie->idgebeurtenis->idDocument->iddossier->idTeam = " + teamId
+
+    query = query + " ORDER BY id DESC"
+    result = database_instance.fetch_rows(query)
+
+    for row in result:
+        print(str(row))
+        items.append(KissItem.custom_init(row[0], row[1], row[2], row[3], row[4], row[5],
+                                          row[6], False, row[8], row[9], row[10]))
+
+    return items
 
 def retrier(counter, func, args):
     try:
