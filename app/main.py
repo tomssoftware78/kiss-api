@@ -323,7 +323,8 @@ def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_a
     query = "SELECT c.ID as id, c.IdDetail AS Number, c.reserv1 AS sin, c.merk->beschrijving AS mark_model_str, " \
             "c.type AS type, {fn CONCAT({fn CONCAT(g.Voornaam, ' ')}, g.naam)} AS operator_identity, " \
             "c.idRelatie->idgebeurtenis->idDocument->Docnr AS pv_number, c.prioriteit AS urgent, " \
-            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out " \
+            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out, " \
+            " c.opdracht->beschrijving AS opdracht " \
             "FROM KISS.tblCCUdetail c LEFT JOIN Kiss.tblgebruikers g ON c.nagezienDoor = g.Stamnummer " \
             "WHERE c.DatumOUT <> \"1900-01-01\" AND c.IdDetail like '" + convertCaseIDToKissDetail(case_id) + "%' "
 
@@ -336,7 +337,7 @@ def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_a
 
     for row in result:
         print(str(row))
-        items.append(KissItem.custom_init(row[0], row[1], row[2], row[3], row[4], row[5],
+        items.append(KissItem.custom_init(row[0], row[1], row[2], row[4] + ' ' + row[3], row[11], row[5],
                                           row[6], False, row[8], row[9], row[10]))
 
     return items
