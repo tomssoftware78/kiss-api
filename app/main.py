@@ -311,7 +311,7 @@ def search_kiss_case(current_user: Annotated[User, Depends(get_current_active_us
             name = row[1]
             if name == "DOMEIN RCCU":
                 name = convertKissDetailToCaseName(row[0])
-            cases.append(KissCase.custom_init(caseId, name, row[2], row[3], row[4], row[5], row[6]))
+            cases.append(KissCase.custom_init(caseId, name, row[2], row[3], row[4], str(row[5]), row[6]))
             ids_processed.append(caseId)
 
     return cases
