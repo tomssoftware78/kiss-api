@@ -15,7 +15,9 @@ RUN pip install /code/intersystems_irispython-3.2.0-py3-none-any.whl
 #
 COPY ./app /code/app
 
+WORKDIR /code/app
+
 #
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
 #If behind proxy
 #CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
