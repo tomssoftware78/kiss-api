@@ -7,8 +7,6 @@ import os
 from uuid import UUID
 
 import iris
-from fabric import Connection
-from unidecode import unidecode
 
 from datetime import datetime, timedelta, date
 from typing import Union
@@ -20,23 +18,11 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from typing_extensions import Annotated
 from contextlib import asynccontextmanager
-from sqlalchemy import create_engine
-from sqlalchemy.sql import text
-from socket import socket
 from kissutils import database_instance
 
 from dotenv import load_dotenv
 load_dotenv()
-connection_ssh_jump = os.environ.get('CONNECTION_SSH_JUMP')
 fake_users_db = json.loads(os.environ.get('USERS'))
-
-connection_local_port = int(os.environ.get('LOCAL_PORT'))
-connection_kiss_port = int(os.environ.get('KISS_IRIS_PORT'))
-connection_kiss_ip = os.environ.get('KISS_IRIS_IP')
-connection_kiss_username = os.environ.get('KISS_USERNAME')
-connection_kiss_password = os.environ.get('KISS_PASSWORD')
-connection_kiss_schema = os.environ.get('KISS_SCHEMA')
-
 
 
 # to get a string like this run:
@@ -247,14 +233,6 @@ def clear_connection():
     app.ssh_connection = None
     app.ssh_forward_ctx = None
 
-
-def ensure_connection():
-    app.ssh_connection = Connection(connection_ssh_jump)
-    app.ssh_forward_ctx = app.ssh_connection.forward_local(local_port=connection_local_port, remote_port=connection_kiss_port, remote_host=connection_kiss_ip, local_host="127.0.0.1")
-    app.ssh_forward_ctx.__enter__()
-    print("after creation")
-    time.sleep(1)
-    clear_connection()
 
 @app.get("/case/{case_id}", response_model=KissCase)
 def get_kiss_case(current_user: Annotated[User, Depends(get_current_active_user)], case_id: int, badge_id: int):

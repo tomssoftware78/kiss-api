@@ -13,13 +13,16 @@ Endpoint = str
 class IrisConnectionManager(BaseConnectionManager[Endpoint, iris.IRISConnection]):
     """We don't want to create a new connection each time, because the db connection fails the first time right after
     creating the ssh-tunnel. It all takes too much time. """
-    def __init__(self, connection_kiss_ip, connection_kiss_port: str, connection_kiss_schema: str, username: str, password: str, connection_ssh_jump: str):
+    def __init__(self, connection_kiss_ip, connection_kiss_port: str, connection_kiss_schema: str, username: str,
+                 password: str, connection_ssh_jump_key: str, connection_ssh_jump_user: str, connection_ssh_jump_host: str):
         self.connection_kiss_ip = connection_kiss_ip
         self.connection_kiss_port = connection_kiss_port
         self.connection_kiss_schema = connection_kiss_schema
         self.connection_kiss_username = username
         self.connection_kiss_password = password
-        self.connection_ssh_jump = connection_ssh_jump
+        self.connection_ssh_jump_key = connection_ssh_jump_key
+        self.connection_ssh_jump_user = connection_ssh_jump_user
+        self.connection_ssh_jump_host = connection_ssh_jump_host
         self.connectiondata = {}
 
     # First connection takes some time
@@ -45,7 +48,13 @@ class IrisConnectionManager(BaseConnectionManager[Endpoint, iris.IRISConnection]
             print(s.getsockname()[1])
             localport = (int)(s.getsockname()[1])
 
-        networkconnection = Connection(self.connection_ssh_jump)
+        networkconnection = Connection(
+            host=self.connection_ssh_jump_host,
+            user=self.connection_ssh_jump_user,
+            connect_kwargs={
+                "key_filename": self.connection_ssh_jump_key,
+            },
+        )
         ctx = networkconnection.forward_local(local_port=localport, remote_port=self.connection_kiss_port,
                        remote_host=self.connection_kiss_ip, local_host="127.0.0.1")
         ctx.__enter__()
@@ -90,10 +99,14 @@ class Database:
                 connection_kiss_username = os.environ.get('KISS_USERNAME')
                 connection_kiss_password = os.environ.get('KISS_PASSWORD')
                 connection_kiss_schema = os.environ.get('KISS_SCHEMA')
-                connection_ssh_jump = os.environ.get('CONNECTION_SSH_JUMP')
+                connection_ssh_jump_key = os.environ.get('CONNECTION_SSH_JUMP_PRIVATE_KEY')
+                connection_ssh_jump_user = os.environ.get('CONNECTION_SSH_JUMP_USER')
+                connection_ssh_jump_host = os.environ.get('CONNECTION_SSH_JUMP_HOST')
 
                 self._connection_pool = ConnectionPool[Endpoint, Connection](
-                    IrisConnectionManager(connection_kiss_ip, connection_kiss_port, connection_kiss_schema, connection_kiss_username, connection_kiss_password, connection_ssh_jump),
+                    IrisConnectionManager(connection_kiss_ip, connection_kiss_port, connection_kiss_schema,
+                                          connection_kiss_username, connection_kiss_password, connection_ssh_jump_key,
+                                          connection_ssh_jump_user, connection_ssh_jump_host),
                     idle_timeout=30.0,
                     max_lifetime=6000.0,
                     min_idle=1,
