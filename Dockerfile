@@ -6,11 +6,11 @@ WORKDIR /code
 
 #
 COPY ./requirements.txt /code/requirements.txt
-COPY ./driver/intersystems_irispython-3.2.0-py3-none-any.whl /code/iris.whl
+COPY ./driver/intersystems_irispython-3.2.0-py3-none-any.whl /code/intersystems_irispython-3.2.0-py3-none-any.whl
 
 #
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-RUN pip install /code/iris.whl
+RUN pip install /code/intersystems_irispython-3.2.0-py3-none-any.whl
 
 #
 COPY ./app /code/app
