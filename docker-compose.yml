@@ -1,0 +1,30 @@
+version: '3.9'
+
+networks:
+  web:
+  internal:
+
+services:
+  kiss-api:
+    env_file: .env
+    container_name: kiss-api
+    image: 'kiss-api-image'
+    restart: unless-stopped
+    ports:
+      - '8085:80'
+    environment:
+      USERS: '${KISS_USERS}'
+      SECRET_KEY: '${KISS_SECRET_KEY}'
+      KISS_IRIS_PORT: '${KISS_IRIS_PORT}'
+      KISS_IRIS_IP: '${KISS_IRIS_IP}'
+      KISS_USERNAME: '${KISS_IRIS_USERNAME}'
+      KISS_PASSWORD: '${KISS_IRIS_PASSWORD}'
+      KISS_SCHEMA: '${KISS_IRIS_SCHEMA}'
+      CONNECTION_SSH_JUMP_PRIVATE_KEY: '${KISS_CONNECTION_SSH_JUMP_PRIVATE_KEY}'
+      CONNECTION_SSH_JUMP_USER: '${KISS_CONNECTION_SSH_JUMP_USER}'
+      CONNECTION_SSH_JUMP_HOST: '${KISS_CONNECTION_SSH_JUMP_HOST}'
+      USE_OLD_CACHE_DRIVER: '${KISS_USE_OLD_CACHE_DRIVER}'
+    volumes:
+      - '/home/datalab/.ssh/:/cert'
+    networks:
+      - internal
