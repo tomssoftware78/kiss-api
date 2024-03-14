@@ -294,6 +294,12 @@ def search_kiss_case(current_user: Annotated[User, Depends(get_current_active_us
 
     return cases
 
+def convert_date_string(d):
+    if d is not None and len(d) >=10:
+        return d[0:4] + '-' + d[5:7] + '-' + d[8:10]
+
+    return d
+
 @app.get("/items/{case_id}", response_model=list[KissItem])
 def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_active_user)], case_id: int, badge_id: int):
     items = []
@@ -301,7 +307,7 @@ def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_a
     query = "SELECT c.ID as id, c.IdDetail AS Number, c.reserv1 AS sin, c.merk->beschrijving AS mark_model_str, " \
             "c.type AS type, {fn CONCAT({fn CONCAT(g.Voornaam, ' ')}, g.naam)} AS operator_identity, " \
             "c.idRelatie->idgebeurtenis->idDocument->Docnr AS pv_number, c.prioriteit AS urgent, " \
-            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out, " \
+            "CONVERT(VARCHAR(20),c.DatumIn, 111) AS Date_in, CONVERT(VARCHAR(20),c.DatumIBN, 111) AS Date_end, CONVERT(VARCHAR(20),c.DatumOut, 111) AS Date_out, " \
             " c.opdracht->beschrijving AS opdracht " \
             "FROM KISS.tblCCUdetail c LEFT JOIN Kiss.tblgebruikers g ON c.nagezienDoor = g.Stamnummer " \
             "WHERE c.DatumOUT <> \"1900-01-01\" AND c.IdDetail like '" + convertCaseIDToKissDetail(case_id) + "%' "
@@ -315,8 +321,9 @@ def get_kiss_items_from_case(current_user: Annotated[User, Depends(get_current_a
 
     for row in result:
         print(str(row))
-        items.append(KissItem.custom_init(row[0], row[1], row[2], row[4] + ' ' + row[3], row[11], row[5],
-                                          row[6], False, row[8], row[9], row[10]))
+        items.append(KissItem.custom_init(row[0], row[1], row[2], str(row[4]) + ' ' + str(row[3]), row[11], row[5],
+                                          row[6], False, convert_date_string(row[8]), convert_date_string(row[9]),
+                                          convert_date_string(row[10])))
 
     return items
 
@@ -329,7 +336,7 @@ def get_kiss_items(current_user: Annotated[User, Depends(get_current_active_user
     query = "SELECT c.ID as id, c.IdDetail AS Number, c.reserv1 AS sin, c.merk->beschrijving AS mark_model_str, " \
             "c.type AS type, {fn CONCAT({fn CONCAT(g.Voornaam, ' ')}, g.naam)} AS operator_identity, " \
             "c.idRelatie->idgebeurtenis->idDocument->Docnr AS pv_number, c.prioriteit AS urgent, " \
-            "DATE(+c.DatumIn) AS Date_in, DATE(+c.DatumIBN) AS Date_end, DATE(+c.DatumOut) AS Date_out " \
+            "CONVERT(VARCHAR(20),c.DatumIn, 111) AS Date_in, CONVERT(VARCHAR(20),c.DatumIBN, 111) AS Date_end, CONVERT(VARCHAR(20),c.DatumOut, 111) AS Date_out " \
             "FROM KISS.tblCCUdetail c LEFT JOIN Kiss.tblgebruikers g ON c.nagezienDoor = g.Stamnummer " \
             "WHERE c.DatumOUT <> \"1900-01-01\" AND c.ID in (" + string_list + ") "
 
@@ -343,7 +350,8 @@ def get_kiss_items(current_user: Annotated[User, Depends(get_current_active_user
     for row in result:
         print(str(row))
         items.append(KissItem.custom_init(row[0], row[1], row[2], row[3], row[4], row[5],
-                                          row[6], False, row[8], row[9], row[10]))
+                                          row[6], False, convert_date_string(row[8]), convert_date_string(row[9]),
+                                          convert_date_string(row[10])))
 
     return items
 
