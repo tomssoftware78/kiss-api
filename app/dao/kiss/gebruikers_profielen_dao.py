@@ -20,3 +20,5 @@ class GebruikersProfielenDao:
         self.logger.debug("SQL: %s", sql)
 
         result = database_instance.fetch_rows(sql)
+
+        return result

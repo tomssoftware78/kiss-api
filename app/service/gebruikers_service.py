@@ -1,5 +1,6 @@
 import logging
 import os
+from uuid import UUID
 
 from dao.kiss.gebruikers_dao import GebruikersDao
 from model import KissUser
@@ -16,7 +17,7 @@ class GebruikersService:
         return self._logger
     
     def __init__(self):
-        self.gebruikers_profielen_dao = GebruikersDao()
+        self.gebruikers_dao = GebruikersDao()
         iris_db_environment = os.environ.get('KISS_IRIS_ENVIRONMENT')
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
         self.KISS_IRIS_ENVIRONMENT = iris_db_environment
