@@ -1,10 +1,12 @@
 import logging
 import os
+from uuid import UUID
 
-from dao.gebruikers_profielen_dao import GebruikersProfielenDao
+from dao.personen_dao import PersonenDao
+from model import KissUser
 
-class GebruikersProfielenService:
-    gebruikers_profielen_dao: GebruikersProfielenDao
+class PersonenService:
+    personen_dao: PersonenDao
     KISS_IRIS_ENVIRONMENT: str
 
     @property
@@ -15,15 +17,24 @@ class GebruikersProfielenService:
         return self._logger
     
     def __init__(self):
-        self.gebruikers_profielen_dao = GebruikersProfielenDao()
+        self.personen_dao = PersonenDao()
         iris_db_environment = os.environ.get('KISS_IRIS_ENVIRONMENT')
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
         self.KISS_IRIS_ENVIRONMENT = iris_db_environment
 
-    def check_limited_to_team(self, badge_id):
-        result = self.gebruikers_profielen_dao.get_toelatingen(badge_id=badge_id)
-        
-        for row in result:
-            return row[0] == 3
+    def get_personen_by_name(self, name):
+        result = self.personen_dao.get_personen_by_name(name=name)
 
-        return True
+        for row in result:
+            self.logger.debug(str(row))
+
+        return result
+
+
+    def get_team(self, badge_id):
+        result = self.gebruikers_dao.get_team(badge_id=badge_id)
+
+        for row in result:
+            return row[0]
+
+        return ""

@@ -3,7 +3,7 @@ import os
 import logging
 
 from service.gebruikers_profielen_service import GebruikersProfielenService
-from dao.kiss.search.kiss_search_dao import KissSearchDao
+from dao.kiss_search_dao import KissSearchDao
 from model import KissCase, KissItem
 from service.kiss_tools import KissTools
 

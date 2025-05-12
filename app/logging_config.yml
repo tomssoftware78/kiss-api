@@ -21,3 +21,10 @@ loggers:
   root:
     level: DEBUG
     handlers: [ console, file_rolling_by_size ]
+
+
+  invoke:
+    level: INFO
+
+  paramiko.transport:
+      level: INFO

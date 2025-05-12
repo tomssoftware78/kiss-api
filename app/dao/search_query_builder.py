@@ -1,7 +1,7 @@
 import logging
 
-from dao.kiss.gebruikers_profielen_dao import GebruikersProfielenDao
-from dao.kiss.gebruikers_dao import GebruikersDao
+from dao.gebruikers_profielen_dao import GebruikersProfielenDao
+from dao.gebruikers_dao import GebruikersDao
 from service.kiss_tools import KissTools
 
 class SearchQueryBuilder:

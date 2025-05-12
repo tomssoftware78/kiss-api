@@ -2,7 +2,7 @@ from kissutils import database_instance
 import logging
 import os
 
-from dao.kiss.search.search_query_builder import SearchQueryBuilder
+from dao.search_query_builder import SearchQueryBuilder
 
 class KissSearchDao:
 

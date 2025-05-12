@@ -2,7 +2,7 @@ import logging
 import os
 from uuid import UUID
 
-from dao.kiss.gebruikers_dao import GebruikersDao
+from dao.gebruikers_dao import GebruikersDao
 from model import KissUser
 
 class GebruikersService:
