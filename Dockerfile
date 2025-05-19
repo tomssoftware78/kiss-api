@@ -3,6 +3,10 @@ FROM python:3.9
 RUN apt-get update
 RUN apt-get install -y apt-utils build-essential gcc
 
+RUN mkdir -p /logs
+RUN mkdir -p /output
+
+
 ENV JAVA_FOLDER java-se-8u41-ri
 
 ENV JVM_ROOT /usr/lib/jvm
@@ -36,6 +40,11 @@ RUN pip install /code/intersystems_irispython-3.2.0-py3-none-any.whl
 
 #
 COPY ./app /code/app
+COPY ./.env /code
+
+VOLUME /logs
+VOLUME /output
+
 
 WORKDIR /code/app
 
