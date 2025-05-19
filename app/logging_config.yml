@@ -1,0 +1,30 @@
+version: 1
+formatters:
+  detailed:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: detailed
+    stream: ext://sys.stdout
+  file_rolling_by_size:
+    class:  logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: detailed
+    filename: kiss-api.log
+    maxBytes: 10485760  # 10 MB
+    backupCount: 5      # Keep up to 5 backup files
+  
+loggers:
+  root:
+    level: DEBUG
+    handlers: [ console, file_rolling_by_size ]
+
+
+  invoke:
+    level: INFO
+
+  paramiko.transport:
+      level: INFO
