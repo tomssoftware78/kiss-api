@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/person")
-#def test123(current_user: Annotated[User, Depends(get_current_active_user)], param1: str, param2: str):
 def person_by_name(name: str):    
     personen_service = PersonenService()
     personen_marshaller = PersonenMarshaller()

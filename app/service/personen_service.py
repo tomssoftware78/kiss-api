@@ -25,9 +25,7 @@ class PersonenService:
     def get_personen_by_name(self, name):
         result = self.personen_dao.get_personen_by_name(name=name)
 
-        for row in result:
-            self.logger.debug(str(row))
-
+        self.logger.debug(result)
         return result
 
 

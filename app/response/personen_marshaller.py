@@ -10,6 +10,7 @@ class PersonenMarshaller:
     columns = [
                 "ID", 
                 "EntiteitVatting", 
+                "Type",
                 "Creatie", 
                 "LaatsteWijziging", 
                 "Naam", 
@@ -24,8 +25,6 @@ class PersonenMarshaller:
                 "Info", 
                 "AFIS"
             ]
-
-    
 
     @property
     def logger(self):
