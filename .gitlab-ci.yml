@@ -8,13 +8,13 @@ stages:
   - docker_build
   - docker_deploy
 
-build_job:
+.build_job:
   stage: build
   script:
     - echo "Building the project..."
     - python -m venv venv #
 
-.docker_build_and_push:
+docker_build_and_push:
   stage: docker_build
   image: docker:27.4.0
   variables:
@@ -28,7 +28,7 @@ build_job:
     - docker tag my-i2-kiss-api-container $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
 
-docker_deploy_to_server:
+.docker_deploy_to_server:
   stage: docker_deploy
   image: docker:27.4.0
   variables:
