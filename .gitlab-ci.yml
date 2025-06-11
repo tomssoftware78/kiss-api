@@ -42,8 +42,17 @@ docker_deploy_to_server:
     #- ls -la ~/.ssh
     #- cat ~/.ssh/id_rsa
     #:ad0a4ff7 
+    - | 
+      ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
+        bash -c '
+          pwd
+          ls -la
+          rm -rf i2-kiss-api 
+          mkdir i2-kiss-api
+        '
+      "
     - |
-      rsync -e "ssh -o StrictHostKeyChecking=no" -avz --delete ./docker-compose.yml docker@192.168.70.5:~
+      rsync -e "ssh -o StrictHostKeyChecking=no" -avz --delete ./is-kiss-api/docker-compose.yml docker@192.168.70.5:~
     - | 
       ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
         export CONTAINER_IMAGE_SUB=$CONTAINER_IMAGE;
@@ -55,6 +64,8 @@ docker_deploy_to_server:
           echo CI_COMMIT_TAG_SUB: \$CI_COMMIT_TAG_SUB;
           pwd
           ls -la
+          mkdir i2-kiss-api
+
           #mkdir -p \$LOGS_FOLDER_ON_DOCKER_HOST_SUB
           #docker stop kiss-data-extraction-tool;
           #docker rm kiss-data-extraction-tool;
