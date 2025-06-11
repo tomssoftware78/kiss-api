@@ -95,15 +95,14 @@ def connect_to_iris(localport):
     return iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
 
 
-#in de huidge manier van builden werkt dit niet, in de docker container is enkel de source code aanwezig, niet de .git folder!
 # Define the version endpoint
-# @app.get("/version")
-# async def get_version():
-#    version_response_chain = VersionResponseChainFactory().create_version_response_chain()
-#     version_response = version_response_chain.create_version_response()
-#     json_response = version_response.model_dump_json()
-#     logger.info("Version response: %s", json_response)
-#     return json_response
+@app.get("/version")
+async def get_version():
+    version_response_chain = VersionResponseChainFactory().create_version_response_chain()
+    version_response = version_response_chain.create_version_response()
+    json_response = version_response.model_dump_json()
+    logger.info("Version response: %s", json_response)
+    return json_response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8085) #wordt  niet uitgevoerd indien de flask app gestart wordt via docker
