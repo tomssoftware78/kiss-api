@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 load_dotenv(override=True)
 fake_users_db = json.loads(os.environ.get('USERS'))
-
+print(fake_users_db)
 
 # to get a string like this run:
 # openssl rand -hex 32

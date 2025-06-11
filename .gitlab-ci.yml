@@ -8,7 +8,7 @@ stages:
   - docker_build
   - docker_deploy
 
-.build_job:
+build_job:
   stage: build
   script:
     - echo "Building the project..."
