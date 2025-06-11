@@ -1,10 +1,7 @@
 networks:
-  internal:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.29.0.0/16
+  default:
+    name: bridge
+    external: true
 
 services:
   kiss-api:
@@ -31,5 +28,4 @@ services:
     volumes:
       - '/home/datalab/.ssh/:/cert'
     networks:
-      internal:
-        ipv4_address: 172.29.0.10
+      -default
