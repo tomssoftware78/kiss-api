@@ -53,6 +53,7 @@ docker_deploy_to_server:
       "
     - |
       rsync -e "ssh -o StrictHostKeyChecking=no" -avz --delete ./docker-compose.yml docker@192.168.70.5:~/i2-kiss-api
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz --delete ./.env docker@192.168.70.5:~/i2-kiss-api/.env
     - | 
       ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
         export CONTAINER_IMAGE_SUB=$CONTAINER_IMAGE;
