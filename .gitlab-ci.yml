@@ -23,3 +23,6 @@ docker_build_and_push:
     - ls -la
     - pwd
     - docker info
+    - docker build --no-cache -t my-i2-kiss-api-container .
+    - docker tag my-i2-kiss-api-container $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
