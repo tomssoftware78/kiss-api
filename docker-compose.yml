@@ -5,7 +5,7 @@ networks:
 services:
   kiss-api:
     env_file: .env
-    container_name: docker-host.ccuvpndom.com:5000/i2-kiss-api:ad0a4ff7
+    container_name: docker-registry:5000/i2-kiss-api:ad0a4ff7    
     image: 'i2-kiss-api'
     restart: unless-stopped
     ports:
