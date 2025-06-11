@@ -1,13 +1,24 @@
 variables:
-  CONTAINER_IMAGE: "docker-host.ccuvpndom.com:5000/kiss-api"
+  CONTAINER_IMAGE: "docker-host.ccuvpndom.com:5000/i2-kiss-api"
 
 image: python:3.13.1-bookworm
 
 stages:
   - build
+  - docker_build
 
-build_job:
+.build_job:
   stage: build
   script:
     - echo "Building the project..."
     - python -m venv venv #
+
+docker_build_and_push:
+  stage: docker_build
+  image: docker:27.4.0
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+  script:
+    - echo "Build Docker Image"
+    - ls -la
+    - pwd
