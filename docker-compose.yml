@@ -10,7 +10,7 @@ services:
     image: docker-host.ccuvpndom.com:5000/i2-kiss-api:ad0a4ff7
     restart: unless-stopped
     ports:
-      - '8087:80'
+      - '8097:80'
     environment:
       USERS: '${USERS}'
       SECRET_KEY: '${SECRET_KEY}'
