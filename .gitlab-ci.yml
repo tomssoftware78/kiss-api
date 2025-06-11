@@ -15,17 +15,6 @@ build_job:
     - pip install uv
     - echo "Building the project..."
     - python -m venv venv #
-    - sed -i "s|__DOCKER_TAG__|$CI_COMMIT_SHORT_SHA|g" docker-compose.yml
-    - ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
-        bash -c '
-          pwd
-          ls -la
-          rm -rf i2-kiss-api 
-          mkdir i2-kiss-api
-        '
-      "
-    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.5:~/i2-kiss-api
-    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./.env docker@192.168.70.5:~/i2-kiss-api/.env
 
 
 docker_build_and_push:
@@ -67,36 +56,9 @@ docker_deploy_to_server:
           mkdir i2-kiss-api
         '
       "
+    - sed -i "s|__DOCKER_TAG__|$CI_COMMIT_SHORT_SHA|g" docker-compose.yml
     - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.5:~/i2-kiss-api
     - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./.env docker@192.168.70.5:~/i2-kiss-api/.env
-    - | 
-      ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
-        export CONTAINER_IMAGE_SUB=$CONTAINER_IMAGE;
-        export CI_COMMIT_TAG_SUB=$CI_COMMIT_TAG;
-        export LOGS_FOLDER_ON_DOCKER_HOST_SUB=$LOGS_FOLDER_ON_DOCKER_HOST
-        export OUTPUT_FOLDER_ON_DOCKER_HOST_SUB=$OUTPUT_FOLDER_ON_DOCKER_HOST
-        bash -c '
-          echo CONTAINER_IMAGE_SUB: \$CONTAINER_IMAGE_SUB; 
-          echo CI_COMMIT_TAG_SUB: \$CI_COMMIT_TAG_SUB;
-          cd i2-kiss-api
-          pwd
-          ls -la
-
-          #mkdir -p \$LOGS_FOLDER_ON_DOCKER_HOST_SUB
-          #docker stop kiss-data-extraction-tool;
-          #docker rm kiss-data-extraction-tool;
-          #echo start the container \$CONTAINER_IMAGE_SUB:\$CI_COMMIT_TAG_SUB;
-          echo start the container \$CONTAINER_IMAGE_SUB:ad0a4ff7
-
-          echo "Pull nieuwste image"
-          docker pull \$CONTAINER_IMAGE_SUB:ad0a4ff7
-          docker compose down
-          docker compose up -d
-          #docker run -v \$LOGS_FOLDER_ON_DOCKER_HOST_SUB:/logs -v \$OUTPUT_FOLDER_ON_DOCKER_HOST_SUB:/output -d --name kiss-data-extraction-tool -p 9009:8086 #\$CONTAINER_IMAGE_SUB:\$CI_COMMIT_TAG_SUB
-        '
-      "
-  rules:
-    - if: '$CI_COMMIT_TAG'
-  
+    
   
 
