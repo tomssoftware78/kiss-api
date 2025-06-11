@@ -8,13 +8,15 @@ stages:
   - docker_build
   - docker_deploy
 
-.build_job:
+build_job:
   stage: build
   script:
+    - echo "Installing uv..."
+    - pip install uv
     - echo "Building the project..."
     - python -m venv venv #
 
-.docker_build_and_push:
+docker_build_and_push:
   stage: docker_build
   image: docker:27.4.0
   variables:
@@ -27,6 +29,9 @@ stages:
     - docker build --no-cache -t my-i2-kiss-api-container .
     - docker tag my-i2-kiss-api-container $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
     - docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: '$CI_COMMIT_TAG'
+
 
 docker_deploy_to_server:
   stage: docker_deploy
@@ -77,6 +82,9 @@ docker_deploy_to_server:
           docker compose up -d
           #docker run -v \$LOGS_FOLDER_ON_DOCKER_HOST_SUB:/logs -v \$OUTPUT_FOLDER_ON_DOCKER_HOST_SUB:/output -d --name kiss-data-extraction-tool -p 9009:8086 #\$CONTAINER_IMAGE_SUB:\$CI_COMMIT_TAG_SUB
         '
-      "  
+      "
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  
   
 
