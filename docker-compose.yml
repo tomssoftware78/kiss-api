@@ -6,7 +6,7 @@ services:
   kiss-api:
     env_file: .env
     container_name: i2-kiss-api   
-    image: docker-registry:5000/i2-kiss-api:ad0a4ff7
+    image: docker-host.ccuvpndom.com:5000/i2-kiss-api:ad0a4ff7
     restart: unless-stopped
     ports:
       - '8087:80'
