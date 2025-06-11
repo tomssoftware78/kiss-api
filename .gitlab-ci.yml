@@ -34,6 +34,7 @@ docker_deploy_to_server:
   variables:
     DOCKER_HOST: unix:///var/run/docker.sock
   script:
+    - apt-get update && apt-get install -y openssh-client rsync sshpass
     - echo "Deploying to production server..."
     - mkdir -p ~/.ssh
     - echo "$SSH_KEY" > ~/.ssh/id_rsa
