@@ -15,6 +15,18 @@ build_job:
     - pip install uv
     - echo "Building the project..."
     - python -m venv venv #
+    - sed -i "s|__DOCKER_TAG__|$CI_COMMIT_SHORT_SHA|g" docker-compose.yml
+    - ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
+        bash -c '
+          pwd
+          ls -la
+          rm -rf i2-kiss-api 
+          mkdir i2-kiss-api
+        '
+      "
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.5:~/i2-kiss-api
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./.env docker@192.168.70.5:~/i2-kiss-api/.env
+
 
 docker_build_and_push:
   stage: docker_build
