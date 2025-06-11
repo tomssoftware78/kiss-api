@@ -54,6 +54,7 @@ docker_deploy_to_server:
           echo CONTAINER_IMAGE_SUB: \$CONTAINER_IMAGE_SUB; 
           echo CI_COMMIT_TAG_SUB: \$CI_COMMIT_TAG_SUB;
           pwd
+          ls -la
           #mkdir -p \$LOGS_FOLDER_ON_DOCKER_HOST_SUB
           #docker stop kiss-data-extraction-tool;
           #docker rm kiss-data-extraction-tool;
