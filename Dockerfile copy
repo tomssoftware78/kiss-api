@@ -1,5 +1,5 @@
-# Stage 1: builder
-FROM python:3.12 AS builder
+# Stage 1: Builder
+FROM python:3.12 AS Builder
 
 # Install uv binary from it's official docker repository
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -10,15 +10,11 @@ apt-utils curl build-essential gcc && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /code-in-docker
 
-COPY driver/ ./driver
-
 # Copy dependency management files
 COPY uv.lock .
 COPY pyproject.toml .
 
-RUN uv venv
-# Activeer venv en installeer dependencies
-RUN . .venv/bin/activate
+# Clear uv cache and install dependencies
 RUN uv cache clean
 RUN uv sync --frozen --compile-bytecode
 
@@ -49,14 +45,12 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Set all environment variables in one command
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
-ENV PATH="/code-in-docker/.venv/bin:$PATH"
 
 WORKDIR /code-in-docker
 
-#### Copy thevirtual environment from the builder stage
+# Copy thevirtual environment from the builder stage
 COPY --from=builder /code-in-docker /code-in-docker
-COPY app/ .
-COPY kiss_fc_api .
+COPY ./app/* /code-in-docker
 RUN rm /code-in-docker/logging_config.yml
 RUN mv /code-in-docker/logging_config_prd.yml /code-in-docker/logging_config.yml
 
@@ -66,4 +60,8 @@ RUN mkdir -p /output
 
 
 
-CMD ["uv", "run", "gunicorn", "main:app", "--bind", "0.0.0.0:80", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--timeout", "0"]
+#
+#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+#If behind proxy
+#CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]

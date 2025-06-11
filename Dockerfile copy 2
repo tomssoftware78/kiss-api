@@ -1,0 +1,22 @@
+FROM python:3.12
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+COPY ./pyproject.toml .
+COPY ./uv.lock .
+COPY ./driver ./driver
+COPY ./kiss_fc_api .
+COPY ./app ./app
+COPY ./.env ./app
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y build-essential curl gcc \
+    && uv cache clean \
+    && uv sync --frozen --compile-bytecode \
+    && rm -rf /var/lib/apt/lists/*
+
+#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

@@ -7,11 +7,11 @@ networks:
 services:
   kiss-api:
     env_file: .env
-    container_name: kiss-api
-    image: 'kiss-api-image'
+    container_name: i2-kiss-api
+    image: 'i2-kiss-api'
     restart: unless-stopped
     ports:
-      - '8085:80'
+      - '8087:80'
     environment:
       USERS: '${USERS}'
       SECRET_KEY: '${SECRET_KEY}'
@@ -24,6 +24,8 @@ services:
       CONNECTION_SSH_JUMP_USER: '${CONNECTION_SSH_JUMP_USER}'
       CONNECTION_SSH_JUMP_HOST: '${CONNECTION_SSH_JUMP_HOST}'
       USE_OLD_CACHE_DRIVER: '${USE_OLD_CACHE_DRIVER}'
+      KISS_IRIS_ENVIRONMENT: '${KISS_IRIS_ENVIRONMENT}'
+
     volumes:
       - '/home/datalab/.ssh/:/cert'
     networks:
