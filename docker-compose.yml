@@ -28,4 +28,4 @@ services:
     volumes:
       - '/home/datalab/.ssh/:/cert'
     networks:
-      -default
+      - default
