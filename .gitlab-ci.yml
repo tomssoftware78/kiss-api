@@ -50,12 +50,13 @@ docker_deploy_to_server:
     #- ls -la ~/.ssh
     #- cat ~/.ssh/id_rsa
     - ssh -o StrictHostKeyChecking=no docker@192.168.70.7 "
-        bash -c '
           pwd
           ls -la
-          rm -rf i2-kiss-api 
-          mkdir i2-kiss-api
-        '
+          echo \"Verwijderen oude map...\"
+          rm -rf i2-kiss-api
+          echo \"Aanmaken nieuwe map...\" 
+          mkdir -p i2-kiss-api
+          ls -la
       "
     - rm ./docker-compose.yml
     - mv ./docker-compose-prd.yml ./docker-compose.yml
