@@ -1,8 +1,10 @@
 from kissutils import database_instance
+from dao.search_query_builder import SearchQueryBuilder
+
 import logging
 import os
 
-from dao.search_query_builder import SearchQueryBuilder
+
 
 class KissSearchDao:
 

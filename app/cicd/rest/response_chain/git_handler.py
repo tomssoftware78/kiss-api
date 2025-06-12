@@ -27,8 +27,22 @@ class GitHandler(Handler):
             # Initialize git repository
             repo = git.Repo(search_parent_directories=True)
 
-            git_tag = repo.git.describe('--tags', '--abbrev=0')
-            print(git_tag)
+            git_tag = ""  # or use a default like "v0.0.0"
+            try:
+                git_tag = repo.git.describe('--tags', '--abbrev=0')
+            #except git.exc.GitCommandError:
+            #    git_tag = ""  # or use a default like "v0.0.0"
+            #    self.logger.info("Setting git tag hardcoded to v0.0.0")
+            #    self.logger.error(f"Error: {e.stderr}")    
+            except Exception as e:
+                #self.logger.error(f"Error: {e.stderr}")
+                self.logger.error("Error: %s", e, exc_info=True)
+            finally:
+                self.logger.debug("In finally 2.")    
+
+            #git_tag = repo.git.describe('--tags', '--abbrev=0')
+            self.logger.debug("Git tag: %s", git_tag)
+
             # Get the current commit hash
             git_commit = repo.head.object.hexsha
 
@@ -36,8 +50,13 @@ class GitHandler(Handler):
                 self.logger.debug("Version response data found (tag %s and commit %s)", git_tag, git_commit)
                 return VersionResponse(tag=git_tag, commit=git_commit)
 
-        except git.exc.GitCommandError as e:
-            self.logger.error(f"Error: {e.stderr}")
+        #except git.exc.GitCommandError as e:
+        #    self.logger.error(f"Error: {e.stderr}")
+        except Exception as e:
+            #self.logger.error(f"Error: {e.stderr}") 
+            self.logger.error("Error: %s", e, exc_info=True) 
+        finally:
+            self.logger.debug("In finally 1.")
 
         if self.next_handler:
           return self.next_handler.create_version_response()

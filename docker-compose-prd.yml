@@ -1,12 +1,13 @@
 networks:
-  web:
-  internal:
+  default:
+    name: gitlab-network
+    external: true
 
 services:
   kiss-api:
     env_file: .env
     container_name: i2-kiss-api   
-    image: i2-kiss-api
+    image: docker-host.ccuvpndom.com:5000/i2-kiss-api:__DOCKER_TAG__
 
     restart: unless-stopped
     ports:
@@ -28,4 +29,4 @@ services:
     volumes:
       - '/home/datalab/.ssh/:/cert'
     networks:
-      - internal
+      - default
