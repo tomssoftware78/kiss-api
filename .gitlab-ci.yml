@@ -55,7 +55,7 @@ docker_deploy_to_server:
           echo \"Verwijderen oude map...\"
           rm -rf i2-kiss-api
           echo \"Aanmaken nieuwe map...\" 
-          mkdir -p i2-kiss-api
+          mkdir -p ~/i2-kiss-api
           ls -la
       "
     - rm ./docker-compose.yml
