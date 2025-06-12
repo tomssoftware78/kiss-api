@@ -1,9 +1,10 @@
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
-from security.model.security_model import UserInDB
 from datetime import datetime, timedelta, date
 from typing import Union
 from jose import JWTError, jwt
+
+from security.model.security_model import UserInDB
 
 class SecurityService:
 

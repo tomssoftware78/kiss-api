@@ -31,9 +31,14 @@ from cicd.rest.response_chain.response_chain_factory import VersionResponseChain
 import logging.config
 import yaml
 
+from routes.i2_connector_routes import router as i2_connector_router
+from routes.kiss_search_routes import router as kiss_search_router
+
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(script_dir, 'logging_config.yml')
+
+
 
 with open(config_path, 'r') as f:
     config = yaml.safe_load(f.read())
@@ -41,12 +46,8 @@ with open(config_path, 'r') as f:
 logging.config.dictConfig(config)
 logger = logging.getLogger(__name__)
 
-from routes.i2_connector_routes import router as i2_connector_router
-from routes.kiss_search_routes import router as kiss_search_router
-
-load_dotenv()
+load_dotenv(override=True)
 fake_users_db = json.loads(os.environ.get('USERS'))
-
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -93,7 +94,6 @@ def connect_to_iris(localport):
     return iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
 
 
-
 # Define the version endpoint
 @app.get("/version")
 async def get_version():
@@ -101,8 +101,7 @@ async def get_version():
     version_response = version_response_chain.create_version_response()
     json_response = version_response.model_dump_json()
     logger.info("Version response: %s", json_response)
-
     return json_response
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8085)
+    uvicorn.run(app, host="0.0.0.0", port=8085) #wordt  niet uitgevoerd indien de flask app gestart wordt via docker
