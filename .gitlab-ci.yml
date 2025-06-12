@@ -67,7 +67,7 @@ docker_deploy_to_server:
     - sed -i "s|__GIT_COMMIT__|$CI_COMMIT_SHORT_SHA|g" .env
     #- sed -i "s|__GIT_TAG__|$CI_COMMIT_TAG|g" .env
     - sed -i "s|__GIT_TAG__|$CI_COMMIT_SHORT_SHA|g" .env
-    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.7:~/i2-kiss-api
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.7:~/i2-kiss-api/docker-compose.yml
     - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./.env docker@192.168.70.7:~/i2-kiss-api/.env
     - | 
       ssh -o StrictHostKeyChecking=no docker@192.168.70.7 "
