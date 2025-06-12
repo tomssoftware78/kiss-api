@@ -51,7 +51,6 @@ docker_deploy_to_server:
     - chmod 600 ~/.ssh/id_rsa
     #- ls -la ~/.ssh
     #- cat ~/.ssh/id_rsa
-    #:ad0a4ff7 
     - ssh -o StrictHostKeyChecking=no docker@192.168.70.5 "
         bash -c '
           pwd
