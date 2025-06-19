@@ -27,16 +27,13 @@ docker_build_and_push:
     - ls -la
     - pwd
     - docker info
-    #- docker build --no-cache -t my-i2-kiss-api-container .
-    #- docker tag my-i2-kiss-api-container $CONTAINER_IMAGE:$CI_COMMIT_TAG
-    #- docker tag my-i2-kiss-api-container $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_TAG .
-    - docker image push $CONTAINER_IMAGE:$CI_COMMIT_TAG
-    #- docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA .
-    #- docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
+    #- docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_TAG .
+    #- docker image push $CONTAINER_IMAGE:$CI_COMMIT_TAG
+    - docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
     
-  rules:
-    - if: '$CI_COMMIT_TAG'
+#  rules:
+#    - if: '$CI_COMMIT_TAG'
 
 
 docker_deploy_to_server:
@@ -56,8 +53,9 @@ docker_deploy_to_server:
         bash -c '
           pwd
           ls -la
-          rm -rf i2-kiss-api 
-          mkdir i2-kiss-api
+          rm -rf i2-kiss-api
+          mkdir -p ~/i2-kiss-api
+          ls -la
         '
       "
     - rm ./docker-compose.yml
@@ -65,18 +63,18 @@ docker_deploy_to_server:
     - pwd
     - ls -la
     - cat ./docker-compose.yml
-    - sed -i "s|__DOCKER_TAG__|$CI_COMMIT_TAG|g" docker-compose.yml
-    #- sed -i "s|__DOCKER_TAG__|$CI_COMMIT_SHORT_SHA|g" docker-compose.yml
+    #- sed -i "s|__DOCKER_TAG__|$CI_COMMIT_TAG|g" docker-compose.yml
+    - sed -i "s|__DOCKER_TAG__|$CI_COMMIT_SHORT_SHA|g" docker-compose.yml
     - sed -i "s|__GIT_COMMIT__|$CI_COMMIT_SHORT_SHA|g" .env
-    - sed -i "s|__GIT_TAG__|$CI_COMMIT_TAG|g" .env
-    #- sed -i "s|__GIT_TAG__|$CI_COMMIT_SHORT_SHA|g" .env
-    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.7:~/i2-kiss-api
+    #- sed -i "s|__GIT_TAG__|$CI_COMMIT_TAG|g" .env
+    - sed -i "s|__GIT_TAG__|$CI_COMMIT_SHORT_SHA|g" .env
+    - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./docker-compose.yml docker@192.168.70.7:~/i2-kiss-api/docker-compose.yml
     - rsync -e "ssh -o StrictHostKeyChecking=no" -avz ./.env docker@192.168.70.7:~/i2-kiss-api/.env
     - | 
       ssh -o StrictHostKeyChecking=no docker@192.168.70.7 "
         export CONTAINER_IMAGE_SUB=$CONTAINER_IMAGE;
-        export CI_COMMIT_TAG_SUB=$CI_COMMIT_TAG;
-        #export CI_COMMIT_TAG_SUB=$CI_COMMIT_SHORT_SHA;
+        #export CI_COMMIT_TAG_SUB=$CI_COMMIT_TAG;
+        export CI_COMMIT_TAG_SUB=$CI_COMMIT_SHORT_SHA;
         export LOGS_FOLDER_ON_DOCKER_HOST_SUB=$LOGS_FOLDER_ON_DOCKER_HOST
         export OUTPUT_FOLDER_ON_DOCKER_HOST_SUB=$OUTPUT_FOLDER_ON_DOCKER_HOST
         bash -c '
@@ -99,8 +97,8 @@ docker_deploy_to_server:
           #docker run -v \$LOGS_FOLDER_ON_DOCKER_HOST_SUB:/logs -v \$OUTPUT_FOLDER_ON_DOCKER_HOST_SUB:/output -d --name kiss-data-extraction-tool -p 9009:8086 #\$CONTAINER_IMAGE_SUB:\$CI_COMMIT_TAG_SUB
         '
       "
-  rules:
-    - if: '$CI_COMMIT_TAG'
+#  rules:
+#    - if: '$CI_COMMIT_TAG'
   
   
 
