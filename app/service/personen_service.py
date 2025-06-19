@@ -1,12 +1,19 @@
 import logging
 import os
+import json
+
 from uuid import UUID
 
+from dao.util.kiss_db_table_mapping import entiteit_table_mapping
+from dao.entiteiten_dao import EntiteitenDao
 from dao.personen_dao import PersonenDao
+from dao.relaties_dao import RelatiesDao
 from model import KissUser
 
 class PersonenService:
+    entiteiten_dao: EntiteitenDao
     personen_dao: PersonenDao
+    relaties_dao: RelatiesDao
     KISS_IRIS_ENVIRONMENT: str
 
     @property
@@ -17,17 +24,41 @@ class PersonenService:
         return self._logger
     
     def __init__(self):
+        self.entiteiten_dao = EntiteitenDao()
         self.personen_dao = PersonenDao()
+        self.relaties_dao = RelatiesDao()
         iris_db_environment = os.environ.get('KISS_IRIS_ENVIRONMENT')
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
         self.KISS_IRIS_ENVIRONMENT = iris_db_environment
 
-    def get_personen_by_name(self, name):
-        result = self.personen_dao.get_personen_by_name(name=name)
+    def get_personen_by_name(self, naam, voornaam):
+        result = self.personen_dao.get_personen_by_name(naam=naam, voornaam=voornaam)
 
         self.logger.debug(result)
         return result
 
+    def expand_persoon(self, id):
+        relaties = self.relaties_dao.get_relaties_with_entiteiten(entiteitId=id)
+        self.logger.debug('Relaties: %s', relaties)
+        result = []
+        naar_entiteiten = []
+        if relaties:
+            for r in relaties:
+                self.logger.debug('Row: %s', json.dumps(r, indent=2))
+                r['Type']
+                naar_entiteit = self.entiteiten_dao.get_entiteit_data(entiteitId=r['IdEntiteit'], entiteit_type=r['Type'])
+                naar_entiteiten.append(naar_entiteit)
+
+                result_entry = {
+                    'relatie': r,
+                    'naar_entiteit': naar_entiteit,
+                    'entiteit_type': entiteit_table_mapping[r['Type']]['naam']
+                }
+                result.append(result_entry)
+
+        self.logger.debug('Naar entiteiten: %s', relaties)
+
+        return result
 
     def get_team(self, badge_id):
         result = self.gebruikers_dao.get_team(badge_id=badge_id)

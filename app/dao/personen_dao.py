@@ -10,12 +10,14 @@ class PersonenDao:
             self._logger = logging.getLogger(self.__class__.__name__)
         return self._logger
     
-    def get_personen_by_name(self, name):
+    def get_personen_by_name(self, naam, voornaam):
         select_clause = "select e.ID, e.EntiteitVatting, e.Type, e.creatie, e.laatsteWijziging, p.Naam, p.Voornaam, p.Dag, p.Maand, p.Jaar, "
         select_clause = select_clause + "p.Geboorteplaats, p.Nationaliteit, p.Geslacht, p.Bijnaam, p.Info, p.AFIS "
         from_clause = "from kiss.tblENTITEITEN e inner join kiss.tblENTPersonen p on p.IdEntiteit = e.ID "
-        where_clause = "where e.type = 1 and p.Naam like '%" + name + "%'"
-
+        where_clause = "where e.type = 1 and p.Naam like '%" + naam + "%'"
+        if voornaam:
+            where_clause += " and p.Voornaam like '%" + voornaam + "%'"
+        
         sql = select_clause + from_clause + where_clause
 
         self.logger.debug("SQL: %s", sql)

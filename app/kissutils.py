@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 use_cache_driver = os.environ.get('USE_OLD_CACHE_DRIVER')
-
 Endpoint = str
 
 
@@ -248,6 +247,29 @@ class Database:
                 result = cursor.fetchall()
                 logger.info("Returning result")
                 return result
+            except Exception as e:
+                logger.error('Error: %s', str(e))
+
+    def fetch_rows_with_column_names(self, query: str):
+        """
+        Function to fetch rows from the database
+        """
+        if not self._connection_pool:
+            self.connect()
+
+        with self._connection_pool.connection("kiss") as con:
+            try:
+                cursor = con.cursor()
+                cursor.execute(query)
+
+                ###
+                kolommen = [desc[0] for desc in cursor.description]
+                results = [dict(zip(kolommen, rij)) for rij in cursor.fetchall()]
+                logger.info("Returning result")
+                return results
+                ###
+
+
             except Exception as e:
                 logger.error('Error: %s', str(e))
 

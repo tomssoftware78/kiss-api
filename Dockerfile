@@ -57,12 +57,8 @@ WORKDIR /code-in-docker
 COPY --from=builder /code-in-docker /code-in-docker
 COPY app/ .
 COPY kiss_fc_api .
-RUN rm /code-in-docker/logging_config.yml
-RUN mv /code-in-docker/logging_config_prd.yml /code-in-docker/logging_config.yml
-
 
 RUN mkdir -p /logs
-RUN mkdir -p /output
 
 
 
