@@ -31,7 +31,6 @@ from cicd.rest.response_chain.response_chain_factory import VersionResponseChain
 import logging.config
 import yaml
 
-from routes.i2_connector_routes import router as i2_connector_router
 from routes.i2_entiteit_connector_routes import router as i2_entiteit_connector_router
 from routes.kiss_search_routes import router as kiss_search_router
 
@@ -64,7 +63,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.ssh_connection = None
 app.ssh_forward_ctx = None
-app.include_router(i2_connector_router)
+
 app.include_router(i2_entiteit_connector_router)
 app.include_router(kiss_search_router)
 
