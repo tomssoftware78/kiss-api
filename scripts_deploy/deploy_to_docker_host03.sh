@@ -25,7 +25,7 @@ scp -i "$PRIVATE_KEY" -r "./Dockerfile" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/Docke
 scp -i "$PRIVATE_KEY" -r "./kiss_fc_api" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
 scp -i "$PRIVATE_KEY" -r "./pyproject.toml" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
 scp -i "$PRIVATE_KEY" -r "./uv.lock" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
-scp -i "$PRIVATE_KEY" -r "./startup_at_docker_host03.sh" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+scp -i "$PRIVATE_KEY" -r "./scripts_deploy/startup_at_docker_host03.sh" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
 
 ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "chmod +x $DOEL_MAP/startup_at_docker_host03.sh"
 

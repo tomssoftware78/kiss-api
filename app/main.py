@@ -10,7 +10,7 @@ import iris
 from datetime import datetime, timedelta, date
 from typing import Union
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -47,6 +47,32 @@ logging.config.dictConfig(config)
 logger = logging.getLogger(__name__)
 
 load_dotenv(override=True)
+
+async def log_request(request: Request, call_next):
+    # Starttijd
+    start_time = time.time()
+
+    # Log request details
+    logger.info("Request received")
+    logger.info("\tmethod: %s", request.method)
+    logger.info("\turl: %s", str(request.url))
+    logger.info("\theaders: %s", dict(request.headers))
+    logger.info("\tremote_addr: %s", request.client.host if request.client else None)
+
+    # Voer de request uit
+    response = await call_next(request)
+
+    # Eindtijd
+    process_time = (time.time() - start_time) * 1000  # in ms
+    logger.info("Response sent")
+    logger.info("\tstatus code: %s", response.status_code)
+    logger.info("\theaders: %s", dict(response.headers))
+    logger.info(f"\tprocessing time (ms): {process_time:.2f}")
+
+
+    return response
+
+
 fake_users_db = json.loads(os.environ.get('USERS'))
 
 # to get a string like this run:
@@ -67,7 +93,7 @@ app.ssh_forward_ctx = None
 app.include_router(i2_entiteit_connector_router)
 app.include_router(kiss_search_router)
 
-
+app.middleware("http")(log_request)
 
 def clear_connection():
     app.ssh_connection = None
