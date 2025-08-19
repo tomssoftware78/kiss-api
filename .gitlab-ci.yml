@@ -1,21 +1,11 @@
 variables:
-  CONTAINER_IMAGE: "docker-host.ccuvpndom.com:5000/i2-kiss-api"
+  CONTAINER_IMAGE: "192.168.70.7:8443/kiss/i2-kiss-api"
 
 image: python:3.13.1-bookworm
 
 stages:
-  - build
   - docker_build
   - docker_deploy
-
-build_job:
-  stage: build
-  script:
-    - echo "Installing uv..."
-    - pip install uv
-    - echo "Building the project..."
-    - python -m venv venv #
-
 
 docker_build_and_push:
   stage: docker_build
