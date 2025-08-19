@@ -8,14 +8,12 @@ from uuid import UUID
 import iris
 
 from datetime import datetime, timedelta, date
-from typing import Union
 
 from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from typing_extensions import Annotated
 from contextlib import asynccontextmanager
 from kissutils import database_instance
 
@@ -115,11 +113,6 @@ def retrier(counter, func, args):
             return retrier(counter-1, func, args)
         else:
             raise e
-
-def connect_to_iris(localport):
-    connection_string = "127.0.0.1:" + str(localport) + "/" + connection_kiss_schema
-    return iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
-
 
 # Define the version endpoint
 @app.get("/version")
