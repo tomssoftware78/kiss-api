@@ -20,6 +20,7 @@ docker_build_and_push:
     #- docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_TAG .
     #- docker image push $CONTAINER_IMAGE:$CI_COMMIT_TAG
     - docker build --no-cache -t $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker login 192.168.70.7:8443 -u admin -p DataWillTell 
     - docker image push $CONTAINER_IMAGE:$CI_COMMIT_SHORT_SHA
     
 #  rules:
