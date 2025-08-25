@@ -14,15 +14,15 @@ echo "📂 Maak doelmap opnieuw aan..."
 mkdir -p $DOEL_MAP
 
 # Kopieer bestanden met scp en specifieke sleutel
-cp -r ./app "$DOEL_MAP/app"
-cp -r ./driver "$DOEL_MAP/driver"
-cp -r ./.env "$DOEL_MAP/.env"
-cp -r ./docker-compose.yml "$DOEL_MAP"
-cp -r ./Dockerfile "$DOEL_MAP/Dockerfile"
-cp -r ./kiss_fc_api "$DOEL_MAP"
-cp -r ./pyproject.toml "$DOEL_MAP"
-cp -r ./uv.lock "$DOEL_MAP"
-cp -r ./scripts_deploy/startup_at_dev_vm_tom.sh "$DOEL_MAP"
+cp -r ../app "$DOEL_MAP/app"
+cp -r ../driver "$DOEL_MAP/driver"
+cp -r ../.env "$DOEL_MAP/.env"
+cp -r ../docker-compose.yml "$DOEL_MAP"
+cp -r ../Dockerfile "$DOEL_MAP/Dockerfile"
+cp -r ../kiss_fc_api "$DOEL_MAP"
+cp -r ../pyproject.toml "$DOEL_MAP"
+cp -r ../uv.lock "$DOEL_MAP"
+cp -r ../scripts_deploy/startup_at_dev_vm_tom.sh "$DOEL_MAP"
 
 chmod +x $DOEL_MAP/startup_at_dev_vm_tom.sh
 
