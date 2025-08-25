@@ -28,5 +28,11 @@ scp -i "$PRIVATE_KEY" -r "./uv.lock" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
 scp -i "$PRIVATE_KEY" -r "./scripts_deploy/startup_at_docker_host03.sh" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
 
 ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "chmod +x $DOEL_MAP/startup_at_docker_host03.sh"
+# Controleer of het succesvol was
+if [ $? -eq 0 ]; then
+    echo "✅ Kopiëren succesvol!"
+else
+    echo "❌ Er ging iets mis bij het kopiëren."
+fi
 
 
