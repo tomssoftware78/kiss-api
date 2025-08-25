@@ -17,15 +17,18 @@ echo "📂 Maak doelmap opnieuw aan..."
 ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "mkdir -p $DOEL_MAP"
 
 # Kopieer bestanden met scp en specifieke sleutel
-scp -i "$PRIVATE_KEY" -r "./app" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/app"
-scp -i "$PRIVATE_KEY" -r "./driver" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/driver"
-scp -i "$PRIVATE_KEY" -r "./.env" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/.env"
-scp -i "$PRIVATE_KEY" -r "./docker-compose.yml" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
-scp -i "$PRIVATE_KEY" -r "./Dockerfile" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/Dockerfile"
-scp -i "$PRIVATE_KEY" -r "./kiss_fc_api" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
-scp -i "$PRIVATE_KEY" -r "./pyproject.toml" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
-scp -i "$PRIVATE_KEY" -r "./uv.lock" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
-scp -i "$PRIVATE_KEY" -r "./scripts_deploy/startup_at_docker_host03.sh" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+scp -i "$PRIVATE_KEY" -r "../app" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/app"
+scp -i "$PRIVATE_KEY" -r "../driver" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/driver"
+scp -i "$PRIVATE_KEY" -r "../.env" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/.env"
+scp -i "$PRIVATE_KEY" -r "../docker-compose-tmp-prd.yml" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/docker-compose.yml"
+scp -i "$PRIVATE_KEY" -r "../Dockerfile" "$SERVER_USER@$SERVER_IP:$DOEL_MAP/Dockerfile"
+scp -i "$PRIVATE_KEY" -r "../kiss_fc_api" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+scp -i "$PRIVATE_KEY" -r "../pyproject.toml" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+scp -i "$PRIVATE_KEY" -r "../uv.lock" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+scp -i "$PRIVATE_KEY" -r "../scripts_deploy/startup_at_docker_host03.sh" "$SERVER_USER@$SERVER_IP:$DOEL_MAP"
+
+ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "rm -f $DOEL_MAP/app/logging_config.yml"
+ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "mv $DOEL_MAP/app/logging_config_tmp_prd.yml $DOEL_MAP/app/logging_config.yml"
 
 ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "chmod +x $DOEL_MAP/startup_at_docker_host03.sh"
 # Controleer of het succesvol was
