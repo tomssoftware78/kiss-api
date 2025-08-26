@@ -123,5 +123,23 @@ async def get_version():
     logger.info("Version response: %s", json_response)
     return json_response
 
+# Lijst van variabelen die je WEL wil tonen
+PUBLIC_ENV_VARS = {
+    "KISS_IRIS_IP",
+    "KISS_IRIS_PORT",
+    "KISS_SCHEMA",
+    "KISS_IRIS_ENVIRONMENT",
+    "USE_OLD_CACHE_DRIVER",
+    "USERS"
+}
+
+@app.get("/env")
+def get_env():
+    public_data = {}
+    for key, value in os.environ.items():
+        if key in PUBLIC_ENV_VARS and value:
+            public_data[key] = value
+    return public_data
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8085) #wordt  niet uitgevoerd indien de flask app gestart wordt via docker

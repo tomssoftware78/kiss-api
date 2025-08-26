@@ -71,10 +71,4 @@ def person_by_name(request: Request):
 
     return JSONResponse(content=result)
 
-
-@router.get("/env")
-def get_env():
-    # Read from .env file
-    env_values = dotenv_values(".env")  # Returns a dict
-    return env_values
     
