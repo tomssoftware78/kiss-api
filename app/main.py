@@ -8,14 +8,12 @@ from uuid import UUID
 import iris
 
 from datetime import datetime, timedelta, date
-from typing import Union
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from typing_extensions import Annotated
 from contextlib import asynccontextmanager
 from kissutils import database_instance
 
@@ -31,7 +29,6 @@ from cicd.rest.response_chain.response_chain_factory import VersionResponseChain
 import logging.config
 import yaml
 
-from routes.i2_connector_routes import router as i2_connector_router
 from routes.i2_entiteit_connector_routes import router as i2_entiteit_connector_router
 from routes.kiss_search_routes import router as kiss_search_router
 
@@ -48,6 +45,32 @@ logging.config.dictConfig(config)
 logger = logging.getLogger(__name__)
 
 load_dotenv(override=True)
+
+async def log_request(request: Request, call_next):
+    # Starttijd
+    start_time = time.time()
+
+    # Log request details
+    logger.info("Request received")
+    logger.info("\tmethod: %s", request.method)
+    logger.info("\turl: %s", str(request.url))
+    logger.info("\theaders: %s", dict(request.headers))
+    logger.info("\tremote_addr: %s", request.client.host if request.client else None)
+
+    # Voer de request uit
+    response = await call_next(request)
+
+    # Eindtijd
+    process_time = (time.time() - start_time) * 1000  # in ms
+    logger.info("Response sent")
+    logger.info("\tstatus code: %s", response.status_code)
+    logger.info("\theaders: %s", dict(response.headers))
+    logger.info(f"\tprocessing time (ms): {process_time:.2f}")
+
+
+    return response
+
+
 fake_users_db = json.loads(os.environ.get('USERS'))
 
 # to get a string like this run:
@@ -64,11 +87,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.ssh_connection = None
 app.ssh_forward_ctx = None
-app.include_router(i2_connector_router)
+
 app.include_router(i2_entiteit_connector_router)
 app.include_router(kiss_search_router)
 
-
+app.middleware("http")(log_request)
 
 def clear_connection():
     app.ssh_connection = None
@@ -91,11 +114,6 @@ def retrier(counter, func, args):
         else:
             raise e
 
-def connect_to_iris(localport):
-    connection_string = "127.0.0.1:" + str(localport) + "/" + connection_kiss_schema
-    return iris.connect(connection_string, username=connection_kiss_username, password=connection_kiss_password)
-
-
 # Define the version endpoint
 @app.get("/version")
 async def get_version():
@@ -104,6 +122,24 @@ async def get_version():
     json_response = version_response.model_dump_json()
     logger.info("Version response: %s", json_response)
     return json_response
+
+# Lijst van variabelen die je WEL wil tonen
+PUBLIC_ENV_VARS = {
+    "KISS_IRIS_IP",
+    "KISS_IRIS_PORT",
+    "KISS_SCHEMA",
+    "KISS_IRIS_ENVIRONMENT",
+    "USE_OLD_CACHE_DRIVER",
+    "USERS"
+}
+
+@app.get("/env")
+def get_env():
+    public_data = {}
+    for key, value in os.environ.items():
+        if key in PUBLIC_ENV_VARS and value:
+            public_data[key] = value
+    return public_data
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8085) #wordt  niet uitgevoerd indien de flask app gestart wordt via docker

@@ -30,7 +30,6 @@ def entiteit_by_name(request: Request):
     logging.info(f"ontvangst van {client_ip} met parameters: {query_params}")
 
     entiteiten_service = EntiteitenService()
-    personen_marshaller = PersonenMarshaller()
     logger.info('test')
     logger.info('Look entiteiten by vatting: %s', vatting)
     logger.info('Look entiteiten by type: %s', type)
@@ -38,7 +37,6 @@ def entiteit_by_name(request: Request):
 
     result = entiteiten_service.get_entiteiten_by_vatting(vatting=vatting, type=type)
     
-    #json_result = personen_marshaller.marshal_result(personen=result)
     return JSONResponse(content=result)
 
 @router.get("/entiteit/expand")
@@ -73,10 +71,4 @@ def person_by_name(request: Request):
 
     return JSONResponse(content=result)
 
-
-@router.get("/env")
-def get_env():
-    # Read from .env file
-    env_values = dotenv_values(".env")  # Returns a dict
-    return env_values
     

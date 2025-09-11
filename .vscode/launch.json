@@ -7,7 +7,7 @@
 
         {
             "name": "Python Debugger: app main",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "app/main.py",
             "console": "integratedTerminal"
