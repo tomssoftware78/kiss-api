@@ -10,14 +10,20 @@
             "type": "debugpy",
             "request": "launch",
             "program": "app/main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1"
+            }
         },
         {
             "name": "Python Debugger: test ssh port in use",
             "type": "debugpy",
             "request": "launch",
             "program": "app/main_test_port.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONDONTWRITEBYTECODE": "1"
+            }
         }
     ]
 }
