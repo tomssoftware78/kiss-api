@@ -31,6 +31,9 @@ import yaml
 
 from routes.i2_entiteit_connector_routes import router as i2_entiteit_connector_router
 from routes.kiss_search_routes import router as kiss_search_router
+from routes.kiss_data_export.kiss_entiteit_export_routes import router as kiss_data_export_entiteiten_router
+from routes.kiss_data_export.kiss_dossiers_export_routes import router as kiss_data_export_dossiers_router
+from routes.kiss_data_export.kiss_vragenregister_export_routes import router as kiss_data_export_vragenregister_router
 
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -90,6 +93,11 @@ app.ssh_forward_ctx = None
 
 app.include_router(i2_entiteit_connector_router)
 app.include_router(kiss_search_router)
+app.include_router(kiss_data_export_entiteiten_router)
+app.include_router(kiss_data_export_dossiers_router)
+app.include_router(kiss_data_export_vragenregister_router)
+
+
 
 app.middleware("http")(log_request)
 
