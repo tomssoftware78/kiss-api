@@ -8,9 +8,6 @@ from dotenv import dotenv_values
 from typing_extensions import Annotated
 from security.model.security_model import User
 from routes.kiss_search_routes import get_current_active_user
-from service.personen_service import PersonenService
-from service.entiteiten_service import EntiteitenService
-from response.personen_marshaller import PersonenMarshaller
 from dao.kiss_data_export.entiteiten_dao import EntiteitenDao
 
 import logging

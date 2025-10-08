@@ -8,9 +8,7 @@ from dotenv import dotenv_values
 from typing_extensions import Annotated
 from security.model.security_model import User
 from routes.kiss_search_routes import get_current_active_user
-from service.personen_service import PersonenService
 from service.entiteiten_service import EntiteitenService
-from response.personen_marshaller import PersonenMarshaller
 
 import logging
 
@@ -55,20 +53,3 @@ def expand_entiteit(request: Request):
     #result = personen_service.expand_persoon(id=id)
 
     return JSONResponse(content=result)
-
-@router.get("/person/expand")
-def person_by_name(request: Request):
-    logger.debug('/person/expand')
-
-    json_result = {}
-
-    client_ip = request.client.host
-    query_params = dict(request.query_params)
-    id = query_params['id']
-
-    personen_service = PersonenService()
-    result = personen_service.expand_persoon(id=id)
-
-    return JSONResponse(content=result)
-
-    

@@ -6,13 +6,11 @@ from uuid import UUID
 
 from dao.util.kiss_db_table_mapping import entiteit_table_mapping
 from dao.entiteiten_dao import EntiteitenDao
-from dao.personen_dao import PersonenDao
 from dao.relaties_dao import RelatiesDao
 from model import KissUser
 
 class EntiteitenService:
     entiteiten_dao: EntiteitenDao
-    personen_dao: PersonenDao
     relaties_dao: RelatiesDao
     KISS_IRIS_ENVIRONMENT: str
 
@@ -25,7 +23,6 @@ class EntiteitenService:
     
     def __init__(self):
         self.entiteiten_dao = EntiteitenDao()
-        self.personen_dao = PersonenDao()
         self.relaties_dao = RelatiesDao()
         iris_db_environment = os.environ.get('KISS_IRIS_ENVIRONMENT')
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
