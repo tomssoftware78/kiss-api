@@ -36,7 +36,6 @@ class EntiteitenService:
 
     def expand_entiteit(self, id=id):
         relaties = self.relaties_dao.get_relaties_with_entiteiten(entiteitId=id)
-        print(type(relaties))
 
         for r in relaties:
             van_entiteit = self.entiteiten_dao.get_entiteit_generic_data(entiteitId=r['IdRelatieVan'])    
