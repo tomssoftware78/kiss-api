@@ -11,11 +11,44 @@ class RelatiesDao:
         return self._logger
     
     def get_relaties_with_entiteiten(self, entiteitId):
-        select_clause = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-        from_clause = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
-        where_clause = "where r.IdRelatieVan = " + entiteitId
+        select_clause_van = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
+        from_clause_van = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
+        where_clause_van = "where r.IdRelatieVan = " + entiteitId
+
+        select_clause_naar = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
+        from_clause_naar = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieVan = e.ID "
+        where_clause_naar = "where r.IdRelatieNaar = " + entiteitId
         
-        sql = select_clause + from_clause + where_clause
+        sql = f"""
+                {select_clause_van}
+                {from_clause_van}
+                {where_clause_van}
+                UNION
+                {select_clause_naar}
+                {from_clause_naar}
+                {where_clause_naar}
+            """
+
+#        sql = f"""SELECT r.ID AS RelatieID, r.*, e.*, e.ID AS IdEntiteit
+#FROM (
+#    SELECT TOP 3 *
+#    FROM kiss.tblRELATIES
+#    WHERE IdRelatieVan = 4331
+#    ORDER BY ID DESC
+#) r
+#INNER JOIN kiss.tblENTITEITEN e ON r.IdRelatieNaar = e.ID
+#
+#UNION all
+#
+#SELECT r.ID AS RelatieID, r.*, e.*, e.ID AS IdEntiteit
+#FROM (
+#    SELECT TOP 2 *
+#    FROM kiss.tblRELATIES
+#    WHERE IdRelatieNaar = 4331
+#    ORDER BY ID DESC
+#) r
+#INNER JOIN kiss.tblENTITEITEN e ON r.IdRelatieVan = e.ID
+#"""
 
         self.logger.debug("SQL: %s", sql)
         #result = database_instance.fetch_rows(sql)
