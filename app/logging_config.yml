@@ -23,6 +23,10 @@ loggers:
     level: DEBUG
     handlers: [ console, file_rolling_by_size ]
 
+  kissutils:
+    level: CRITICAL
+    propagate: false
+
   invoke:
     level: INFO
     propagate: true                # Laat logs doorstromen naar root
