@@ -108,8 +108,12 @@ class EntiteitenDao:
         self.logger.debug("SQL: %s", sql)
         generic_entiteit = database_instance.fetch_rows_with_column_names(sql)
 
-        type = generic_entiteit[0]['Type']
+        
+        if not generic_entiteit:
+            self.logger.warning("No results found for query: %s", sql)
+            return {}
 
+        type = generic_entiteit[0]['Type']
         detail_data = self.get_entiteit_data(entiteitId=entiteitId, entiteit_type=type)
         generic_entiteit[0]['details'] = detail_data
         return generic_entiteit[0]
