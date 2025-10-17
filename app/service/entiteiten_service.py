@@ -43,30 +43,7 @@ class EntiteitenService:
             r['entiteit_van'] = van_entiteit
             r['entiteit_naar'] = naar_entiteit
 
-        return relaties
-    
-    def expand_persoon(self, id):
-        relaties = self.relaties_dao.get_relaties_with_entiteiten(entiteitId=id)
-        self.logger.debug('Relaties: %s', relaties)
-        result = []
-        naar_entiteiten = []
-        if relaties:
-            for r in relaties:
-                self.logger.debug('Row: %s', json.dumps(r, indent=2))
-                r['Type']
-                naar_entiteit = self.entiteiten_dao.get_entiteit_data(entiteitId=r['IdEntiteit'], entiteit_type=r['Type'])
-                naar_entiteiten.append(naar_entiteit)
-
-                result_entry = {
-                    'relatie': r,
-                    'naar_entiteit': naar_entiteit,
-                    'entiteit_type': entiteit_table_mapping[r['Type']]['naam']
-                }
-                result.append(result_entry)
-
-        self.logger.debug('Naar entiteiten: %s', relaties)
-
-        return result
+        return relaties    
 
     def get_team(self, badge_id):
         result = self.gebruikers_dao.get_team(badge_id=badge_id)
