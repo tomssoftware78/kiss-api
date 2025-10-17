@@ -12,11 +12,11 @@ class RelatiesDao:
     
     def get_relaties_with_entiteiten(self, entiteitId):
         select_clause_van = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-        from_clause_van = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
+        from_clause_van = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieVan = e.ID "
         where_clause_van = "where r.IdRelatieVan = " + entiteitId
 
         select_clause_naar = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-        from_clause_naar = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieVan = e.ID "
+        from_clause_naar = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
         where_clause_naar = "where r.IdRelatieNaar = " + entiteitId
         
         sql = f"""
