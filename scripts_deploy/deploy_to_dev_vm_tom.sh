@@ -4,7 +4,8 @@
 SERVER_IP="10.116.0.50"
 DOEL_MAP="/home/tom/deployed/i2-kiss-api"
 
-
+echo "Server IP: $SERVER_IP"
+echo "Doelmap: $DOEL_MAP"
 # 1. Verwijder de doelmap op de server als die bestaat
 echo "🗑️ Verwijder doelmap op $SERVER_IP..."
 rm -rf $DOEL_MAP
