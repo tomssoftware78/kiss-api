@@ -7,7 +7,8 @@ SERVER_IP="192.168.70.7"
 BRON_MAP="./app"
 DOEL_MAP="~/i2-kiss-api"
 
-
+echo "Server IP: $SERVER_IP"
+echo "Doelmap: $DOEL_MAP"
 # 1. Verwijder de doelmap op de server als die bestaat
 echo "🗑️ Verwijder doelmap op $SERVER_IP..."
 ssh -i "$PRIVATE_KEY" "$SERVER_USER@$SERVER_IP" "rm -rf $DOEL_MAP"
