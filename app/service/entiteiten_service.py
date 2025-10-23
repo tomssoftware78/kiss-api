@@ -28,6 +28,12 @@ class EntiteitenService:
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
         self.KISS_IRIS_ENVIRONMENT = iris_db_environment
 
+    def get_persoon_entiteiten_like_this(self, voornaam, naam, id):
+        result = self.entiteiten_dao.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam, id=id)
+
+        self.logger.debug(result)
+        return result
+
     def get_entiteiten_by_vatting(self, vatting, type):
         result = self.entiteiten_dao.get_entiteiten_by_vatting(vatting=vatting, type=type)
 
