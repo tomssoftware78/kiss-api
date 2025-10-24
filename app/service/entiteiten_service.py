@@ -1,13 +1,8 @@
 import logging
 import os
-import json
 
-from uuid import UUID
-
-from dao.util.kiss_db_table_mapping import entiteit_table_mapping
 from dao.entiteiten_dao import EntiteitenDao
 from dao.relaties_dao import RelatiesDao
-from model import KissUser
 
 class EntiteitenService:
     entiteiten_dao: EntiteitenDao

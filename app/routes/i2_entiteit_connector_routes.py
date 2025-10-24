@@ -1,13 +1,6 @@
-from fastapi import APIRouter, HTTPException, Request, Query
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter, Request, Query
 from fastapi.responses import JSONResponse
 
-from dotenv import dotenv_values
-
-from typing_extensions import Annotated
-from security.model.security_model import User
-from routes.kiss_search_routes import get_current_active_user
 from service.entiteiten_service import EntiteitenService
 
 import logging
@@ -30,8 +23,6 @@ def entiteit_by_name(request: Request, id: str = Query(...), voornaam: str = Que
     logger.info(id)
     logger.info(voornaam)
     logger.info(naam)
-    #logger.info('Look entiteiten by vatting: %s', vatting)
-    #logger.info('Look entiteiten by type: %s', type)
 
     result = entiteiten_service.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam, id=id)
     return JSONResponse(content=result)

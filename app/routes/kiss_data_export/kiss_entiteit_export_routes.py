@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 
-from routes.kiss_search_routes import get_current_active_user
 from dao.kiss_data_export.entiteiten_dao import EntiteitenDao
 
 import logging

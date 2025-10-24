@@ -4,11 +4,11 @@ import json
 from jose import JWTError, jwt
 from fastapi import APIRouter, HTTPException
 from typing_extensions import Annotated
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from datetime import datetime, timedelta, date
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from datetime import timedelta
 
-from model import Item, KissCase, KissUser, KissItem
+from model import KissCase, KissUser, KissItem
 from security.model.security_model import TokenData, Token, User
 from service.kiss_search_service import KissSearchService
 from security.security_service import SecurityService
