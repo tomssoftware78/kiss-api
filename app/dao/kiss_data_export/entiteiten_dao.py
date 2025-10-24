@@ -11,24 +11,6 @@ class EntiteitenDao:
             self._logger = logging.getLogger(self.__class__.__name__)
         return self._logger
     
-    def get_personen_count(self):
-        select_clause = "select count(*) "
-        from_clause = "from kiss.tblENTPersonen"
-
-        sql = select_clause + from_clause
-        #self.logger.debug("SQL: %s", sql)
-        
-        result = database_instance.fetch_rows(sql)
-
-        result = [list(row) for row in result] #Ensure we always can process with a list of lists, even when the initial result 
-                                                # returned from the database was a list of tuples
-
-        #self.logger.debug(result)
-        #self.logger.debug(result[0])
-        #self.logger.debug(result[0][0])
-
-        return result[0][0]
-
     def get_personen_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
         select_clause += "e.ID, e.EntiteitVatting, e.Type, e.Icoon, e.oldIdKISS, e.creatie, e.laatsteWijziging, e.gebruikerLaatsteWijziging, e.entIcoon, "

@@ -1,12 +1,6 @@
-from fastapi import APIRouter, HTTPException, Request, Query
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 
-from dotenv import dotenv_values
-
-from typing_extensions import Annotated
-from security.model.security_model import User
 from routes.kiss_search_routes import get_current_active_user
 from dao.kiss_data_export.entiteiten_dao import EntiteitenDao
 
@@ -28,16 +22,6 @@ def get_entiteiten(
     #logger.debug(result)
     
     return JSONResponse(content=result)
-
-@router.get("/export/entiteit/personen/count")
-def persoon_count(request: Request):
-    entiteiten_dao = EntiteitenDao()
-
-    count = entiteiten_dao.get_personen_count()
-
-    return {
-        "count": count
-    }
 
 @router.get("/export/entiteit/personen")
 def get_personen(
