@@ -58,3 +58,17 @@ def expand_entiteit(request: Request, id: str = Query(...)):
     result = entiteiten_service.expand_entiteit(id=id)
 
     return JSONResponse(content=result)
+
+
+@router.get("/dossier/entiteiten")
+def expand_entiteit(request: Request, dossier_naam: str = Query(...), type: str | None = None):
+    logger.debug('/dossier/entiteiten')
+
+    client_ip = request.client.host
+    query_params = dict(request.query_params)
+    logging.info(f"Request received from {client_ip} with parameters: {query_params}")
+
+    entiteiten_service = EntiteitenService()
+    result = entiteiten_service.get_all_entiteiten_in_dossier(dossier_naam=dossier_naam, type=type)
+
+    return JSONResponse(content=result)
