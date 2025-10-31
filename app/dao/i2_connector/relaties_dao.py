@@ -22,8 +22,8 @@ class RelatiesDao:
             
             select_clause = "select r.ID as RelatieID, r.*, e_van.ID as ID_van, e_van.EntiteitVatting as vatting_van, e_van.Type as type_van, "
             select_clause = select_clause + "e_naar.ID as ID_naar, e_naar.EntiteitVatting as vatting_naar, e_naar.Type as type_naar "
-            from_clause = "FROM kiss.tblRELATIES r JOIN kiss.tblENTITEITEN e_van on r.IdRelatieVan = e_van.ID "
-            from_clause = from_clause + "JOIN kiss.tblENTITEITEN e_naar on r.IdRelatieNaar = e_naar.ID "
+            from_clause = "FROM kiss.tblRELATIES r LEFT JOIN kiss.tblENTITEITEN e_van on r.IdRelatieVan = e_van.ID "
+            from_clause = from_clause + "LEFT JOIN kiss.tblENTITEITEN e_naar on r.IdRelatieNaar = e_naar.ID "
 
             where_clause = "where r.IdGebeurtenis in (" + ", ".join(str(x) for x in chunk) + ")"
 

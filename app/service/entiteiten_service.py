@@ -47,10 +47,10 @@ class EntiteitenService:
         return result
     
     def get_all_entiteiten_in_dossier(self, dossier_naam, type):
-        dossier_id = self.dossiers_dao.get_dossier_id_by_name(dossier_naam=dossier_naam)
+        dossier = self.dossiers_dao.get_dossier_by_name(dossier_naam=dossier_naam)
         
         ## TODO what if dossier_id = None
-        document_ids = self.documenten_dao.get_document_ids_by_dossier_id(dossier_id=dossier_id)
+        document_ids = self.documenten_dao.get_document_ids_by_dossier_id(dossier_id=dossier[0]['ID'])
         gebeurtenis_ids = self.gebeurtenissen_dao.get_gebeurtenis_ids_for_document_ids(document_ids=document_ids)
 
         #relaties = self.relaties_dao.get_relaties_with_entiteiten_for_gebeurtenissen(gebeurtenis_ids=gebeurtenis_ids)
@@ -63,8 +63,8 @@ class EntiteitenService:
             r['entiteit_van'] = {}
             r['entiteit_naar'] = {}
             
-
-        return relaties    
+        dossier[0]['relaties'] = relaties
+        return dossier[0]    
 
 
     def expand_entiteit(self, id=id):
