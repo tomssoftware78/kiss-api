@@ -47,24 +47,28 @@ class EntiteitenService:
         return result
     
     def get_all_entiteiten_in_dossier(self, dossier_naam, type):
+        result = {}
         dossier = self.dossiers_dao.get_dossier_by_name(dossier_naam=dossier_naam)
         
-        ## TODO what if dossier_id = None
-        document_ids = self.documenten_dao.get_document_ids_by_dossier_id(dossier_id=dossier[0]['ID'])
-        gebeurtenis_ids = self.gebeurtenissen_dao.get_gebeurtenis_ids_for_document_ids(document_ids=document_ids)
+        if len(dossier) == 1:
+            ## TODO what if dossier_id = None
+            document_ids = self.documenten_dao.get_document_ids_by_dossier_id(dossier_id=dossier[0]['ID'])
+            gebeurtenis_ids = self.gebeurtenissen_dao.get_gebeurtenis_ids_for_document_ids(document_ids=document_ids)
 
-        #relaties = self.relaties_dao.get_relaties_with_entiteiten_for_gebeurtenissen(gebeurtenis_ids=gebeurtenis_ids)
-        relaties = self.relaties_dao.test(gebeurtenis_ids=gebeurtenis_ids)
-        for r in relaties:
-            #van_entiteit = self.entiteiten_dao.get_entiteit_generic_data(entiteitId=r['IdRelatieVan'])    
-            #naar_entiteit = self.entiteiten_dao.get_entiteit_generic_data(entiteitId=r['IdRelatieNaar'])
-            #r['entiteit_van'] = van_entiteit
-            #r['entiteit_naar'] = naar_entiteit
-            r['entiteit_van'] = {}
-            r['entiteit_naar'] = {}
-            
-        dossier[0]['relaties'] = relaties
-        return dossier[0]    
+            #relaties = self.relaties_dao.get_relaties_with_entiteiten_for_gebeurtenissen(gebeurtenis_ids=gebeurtenis_ids)
+            relaties = self.relaties_dao.test(gebeurtenis_ids=gebeurtenis_ids)
+            for r in relaties:
+                #van_entiteit = self.entiteiten_dao.get_entiteit_generic_data(entiteitId=r['IdRelatieVan'])    
+                #naar_entiteit = self.entiteiten_dao.get_entiteit_generic_data(entiteitId=r['IdRelatieNaar'])
+                #r['entiteit_van'] = van_entiteit
+                #r['entiteit_naar'] = naar_entiteit
+                r['entiteit_van'] = {}
+                r['entiteit_naar'] = {}
+                
+            dossier[0]['relaties'] = relaties
+            result = dossier[0]
+
+        return result  
 
 
     def expand_entiteit(self, id=id):

@@ -29,7 +29,7 @@ from cicd.rest.response_chain.response_chain_factory import VersionResponseChain
 import logging.config
 import yaml
 
-from routes.i2_entiteit_connector_routes import router as i2_entiteit_connector_router
+from routes.i2_connector.i2_entiteit_connector_routes import router as i2_entiteit_connector_router
 from routes.kiss_search_routes import router as kiss_search_router
 from routes.kiss_data_export.kiss_entiteit_export_routes import router as kiss_data_export_entiteiten_router
 from routes.kiss_data_export.kiss_dossiers_export_routes import router as kiss_data_export_dossiers_router

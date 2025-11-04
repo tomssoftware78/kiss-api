@@ -2,6 +2,8 @@ from fastapi import APIRouter, Request, Query
 from fastapi.responses import JSONResponse
 
 from service.entiteiten_service import EntiteitenService
+from dao.entiteiten_dao import EntiteitenDao
+from routes.i2_connector.model.entiteiten_connector_models import EntiteitenDetailsData
 
 import logging
 
@@ -71,4 +73,18 @@ def expand_entiteit(request: Request, dossier_naam: str = Query(...), type: str 
     entiteiten_service = EntiteitenService()
     result = entiteiten_service.get_all_entiteiten_in_dossier(dossier_naam=dossier_naam, type=type)
 
+    return JSONResponse(content=result)
+
+@router.post("/dossier/entiteiten/details")
+def get_dossier_entiteiten_details(entiteitenDetailsData: EntiteitenDetailsData):
+    entiteiten_dao = EntiteitenDao()
+
+    logger.debug(entiteitenDetailsData.type)
+    logger.debug(entiteitenDetailsData.entiteit_ids)
+
+    result = entiteiten_dao.get_entiteiten_data(entiteitenDetailsData.entiteit_ids, entiteitenDetailsData.type)
+
+    logger.debug(type(result))
+    logger.debug(result)
+    
     return JSONResponse(content=result)
