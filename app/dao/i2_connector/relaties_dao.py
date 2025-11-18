@@ -14,7 +14,7 @@ class RelatiesDao:
     def __split_list(self, arguments: list):
         return list(chunked(arguments, 1000))
 
-    def test(self, gebeurtenis_ids):
+    def get_relaties_with_entiteiten_for_gebeurtenissen(self, gebeurtenis_ids):
         all_results = []
         gebeurtenis_ids_chunks = self.__split_list(gebeurtenis_ids)
 
@@ -41,65 +41,6 @@ class RelatiesDao:
             # Voeg toe aan verzameling
             all_results.extend(resultaten)
         return all_results
-    
-
-    def get_relaties_with_entiteiten_for_gebeurtenissen(self, gebeurtenis_ids):
-        all_results = []
-        gebeurtenis_ids_chunks = self.__split_list(gebeurtenis_ids)
-
-        for chunk in gebeurtenis_ids_chunks:
-            # Bouw WHERE-clause voor deze chunk
-            where_clause_van = "where r.IdGebeurtenis in (" + ", ".join(str(x) for x in chunk) + ")"
-            where_clause_naar = "where r.IdGebeurtenis in (" + ", ".join(str(x) for x in chunk) + ")"
-
-            select_clause_van = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-            from_clause_van = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieVan = e.ID "
-
-            select_clause_naar = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-            from_clause_naar = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
-
-            sql = f"""
-                {select_clause_van}
-                {from_clause_van}
-                {where_clause_van}
-                UNION
-                {select_clause_naar}
-                {from_clause_naar}
-                {where_clause_naar}
-            """
-
-            self.logger.debug("SQL (chunk %d-%d): %s", chunk[0], chunk[-1], sql)
-
-            # Ophalen van resultaten voor deze chunk
-            resultaten = database_instance.fetch_rows_with_column_names(sql)
-
-            # Voeg toe aan verzameling
-            all_results.extend(resultaten)
-        return all_results
-        
-#        select_clause_van = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-#        from_clause_van = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieVan = e.ID "
-#        where_clause_van = "where r.IdGebeurtenis in (" + ", ".join(str(x) for x in (gebeurtenis_ids)) + ")"
-
-#        select_clause_naar = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "
-#        from_clause_naar = "from kiss.tblRELATIES r inner join kiss.tblENTITEITEN e on r.IdRelatieNaar = e.ID "
-#        where_clause_naar = "where r.IdGebeurtenis in (" + ", ".join(str(x) for x in (gebeurtenis_ids)) + ")"
-        
-#        sql = f"""
-#                {select_clause_van}
-#                {from_clause_van}
-#                {where_clause_van}
-#                UNION
-#                {select_clause_naar}
-#                {from_clause_naar}
-#                {where_clause_naar}
-#            """
-        
-#        self.logger.debug("SQL: %s", sql)
-#        resultaten = database_instance.fetch_rows_with_column_names(sql) #this is always a list of dictionaries.
-                                                                            #dictionary: KEY = column name, VALUE = column value
-        
-#        return resultaten
         
     def get_relaties_with_entiteiten(self, entiteitId):
         select_clause_van = "select r.ID as RelatieID, r.*, e.*, e.ID as IdEntiteit "

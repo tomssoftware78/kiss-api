@@ -3,7 +3,9 @@ from fastapi.responses import JSONResponse
 
 from service.entiteiten_service import EntiteitenService
 from dao.entiteiten_dao import EntiteitenDao
+from dao.i2_connector.dossiers_dao import DossiersDao
 from routes.i2_connector.model.entiteiten_connector_models import EntiteitenDetailsData
+from routes.i2_connector.model.dossiers_connector_models import DossiersDetailsData
 
 import logging
 
@@ -59,6 +61,32 @@ def expand_entiteit(request: Request, id: str = Query(...)):
     entiteiten_service = EntiteitenService()
     result = entiteiten_service.expand_entiteit(id=id)
 
+    return JSONResponse(content=result)
+
+@router.get("/entiteit/dossiers")
+def get_dossiers_for_entiteit(request: Request, id: str = Query(...)):
+    logger.debug('/entiteit/dossiers')
+
+    client_ip = request.client.host
+    query_params = dict(request.query_params)
+    logging.info(f"Request received from {client_ip} with parameters: {query_params}")
+
+    entiteiten_service = EntiteitenService()
+    result = entiteiten_service.get_all_dossiers_for_entiteit(id)
+    return JSONResponse(content=result)
+
+@router.post("/dossiers/details")
+def get_dossiers__details(dossiersDetailsData: DossiersDetailsData):
+    logger.debug('/dossiers/details')
+
+    logger.debug(dossiersDetailsData.dossier_ids)
+
+    dossiers_dao = DossiersDao()
+    result = dossiers_dao.get_dossiers_details(dossier_ids=dossiersDetailsData.dossier_ids)
+
+    logger.debug(type(result))
+    logger.debug(result)
+    
     return JSONResponse(content=result)
 
 
