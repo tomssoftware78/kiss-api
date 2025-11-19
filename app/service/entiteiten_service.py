@@ -53,7 +53,7 @@ class EntiteitenService:
 
         return dossiers 
     
-    def get_all_entiteiten_in_dossier(self, dossier_naam, type):
+    def get_all_entiteiten_in_dossier(self, dossier_naam):
         result = {}
         dossier = self.dossiers_dao.get_dossier_by_name(dossier_naam=dossier_naam)
         

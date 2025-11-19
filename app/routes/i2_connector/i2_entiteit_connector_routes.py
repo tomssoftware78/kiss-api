@@ -91,7 +91,7 @@ def get_dossiers__details(dossiersDetailsData: DossiersDetailsData):
 
 
 @router.get("/dossier/entiteiten")
-def expand_entiteit(request: Request, dossier_naam: str = Query(...), type: str | None = None):
+def expand_entiteit(request: Request, dossier_naam: str = Query(...)):
     logger.debug('/dossier/entiteiten')
 
     client_ip = request.client.host
@@ -99,7 +99,7 @@ def expand_entiteit(request: Request, dossier_naam: str = Query(...), type: str 
     logging.info(f"Request received from {client_ip} with parameters: {query_params}")
 
     entiteiten_service = EntiteitenService()
-    result = entiteiten_service.get_all_entiteiten_in_dossier(dossier_naam=dossier_naam, type=type)
+    result = entiteiten_service.get_all_entiteiten_in_dossier(dossier_naam=dossier_naam)
 
     return JSONResponse(content=result)
 
