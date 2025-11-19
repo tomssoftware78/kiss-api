@@ -2,7 +2,7 @@
 #!/bin/bash
 # Absoluut pad naar de directory waar dit script staat
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 
 rm $PROJECT_ROOT/docker-compose.yml
 mv $PROJECT_ROOT/docker-compose-docker-host03.yml $PROJECT_ROOT/docker-compose.yml
