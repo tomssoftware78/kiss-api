@@ -34,8 +34,25 @@ class EntiteitenService:
         self.logger.debug("Instantiating %s for IRIS DB environment: %s", self.__class__.__name__, iris_db_environment)
         self.KISS_IRIS_ENVIRONMENT = iris_db_environment
 
-    def get_persoon_entiteiten_like_this(self, voornaam, naam, id):
-        result = self.entiteiten_dao.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam, id=id)
+    def get_rechtspersoon_entiteiten_like_this(self, nummer, naam):
+
+        if nummer:
+            result = self.entiteiten_dao.get_rechtspersoon_entiteiten(nummer=nummer, naam=naam)
+            if result:
+                return result
+            
+        if naam:
+            print('test')
+        #als nummer is ingevuld -> zoek die rechtspersoon in de kiss
+
+        #indien gevonden, geef deze terug als resultaat
+
+        #indien niet gevonden, zoek naar ondernemeingen met gelijkaardige naam
+
+        return {}
+
+    def get_persoon_entiteiten_like_this(self, voornaam, naam):
+        result = self.entiteiten_dao.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam)
 
         self.logger.debug(result)
         return result

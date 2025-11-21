@@ -13,8 +13,44 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+@router.get("/entiteit/locatie/like_this")
+def locatie_like_this(request: Request):
+    logger.debug('/entiteit/locatie/like_this')
+    
+    client_ip = request.client.host
+    query_params = dict(request.query_params)
+
+    logging.info(f"Request received from {client_ip} with parameters: {query_params}")
+
+    params = dict(query_params)
+
+    result = {}
+    return JSONResponse(content=result)
+
+
+@router.get("/entiteit/rechtspersoon/like_this")
+def rechtsonen_like_this(request: Request):
+    logger.debug('/entiteit/rechtspersoon/like_this')
+    
+    client_ip = request.client.host
+    query_params = dict(request.query_params)
+
+    logging.info(f"Request received from {client_ip} with parameters: {query_params}")
+
+    params = dict(query_params)
+    nummer = params['nummer']
+    naam = params['naam']
+    
+    entiteiten_service = EntiteitenService()
+    logger.info(nummer)
+    logger.info(naam)  
+
+    result = entiteiten_service.get_rechtspersoon_entiteiten_like_this(nummer=nummer, naam=naam)
+    return JSONResponse(content=result)
+
+
 @router.get("/entiteit/persoon/like_this")
-def entiteit_by_name(request: Request, id: str = Query(...), voornaam: str = Query(...), naam: str = Query(...)):
+def entiteit_by_name(request: Request, voornaam: str = Query(...), naam: str = Query(...)):
     logger.debug('/entiteit/persoon/like_this')
 
     client_ip = request.client.host
@@ -23,12 +59,10 @@ def entiteit_by_name(request: Request, id: str = Query(...), voornaam: str = Que
     logging.info(f"Request received from {client_ip} with parameters: {query_params}")
 
     entiteiten_service = EntiteitenService()
-    logger.info('test')
-    logger.info(id)
     logger.info(voornaam)
     logger.info(naam)
 
-    result = entiteiten_service.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam, id=id)
+    result = entiteiten_service.get_persoon_entiteiten_like_this(voornaam=voornaam, naam=naam)
     return JSONResponse(content=result)
 
 
