@@ -23,8 +23,18 @@ def locatie_like_this(request: Request):
     logging.info(f"Request received from {client_ip} with parameters: {query_params}")
 
     params = dict(query_params)
+    straat = params['straat']
+    nummer = params['nummer']
+    land = params['land']
+    gemeente = params['gemeente']
 
-    result = {}
+    entiteiten_service = EntiteitenService()
+    logger.info(straat)  
+    logger.info(nummer)
+    logger.info(land)
+    logger.info(gemeente)
+
+    result = entiteiten_service.get_locatie_entiteiten_like_this(straat=straat, nummer=nummer, land=land, gemeente=gemeente)
     return JSONResponse(content=result)
 
 

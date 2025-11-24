@@ -1,6 +1,7 @@
 from kissutils import database_instance
 from .persoon_like_this_query_builder import PersoonLikeThisQueryBuilder 
 from .rechtspersoon_like_this_query_builder import RechtspersoonLikeThisQueryBuilder
+from .locatie_like_this_query_builder import LocatieLikeThisQueryBuilder
 from dao.util import kiss_db_table_mapping
 import logging
 
@@ -13,6 +14,29 @@ class EntiteitenDao:
             self._logger = logging.getLogger(self.__class__.__name__)
         return self._logger
     
+    def get_locatie_entiteiten(self, straat, nummer, land, gemeente):
+        query_builder = LocatieLikeThisQueryBuilder()
+        sql = query_builder.build_query(straat=straat, nummer=nummer, land=land, gemeente=gemeente)
+
+        #self.logger.debug("SQL: %s", sql)
+        entiteiten_with_names = database_instance.fetch_rows_with_column_names(sql)
+
+        entiteiten_with_names_with_rechtspersoon_as_details = []
+        if entiteiten_with_names:
+            for item in entiteiten_with_names:
+                keys = list(item.keys())
+                first_part = {k: item[k] for k in keys[:9]}     # eerste 9
+                remaining = {k: item[k] for k in keys[9:]}      # alles na de 9e
+                
+                if remaining:  # alleen toevoegen als er iets overblijft
+                    first_part["details"] = remaining
+                else:
+                    first_part["details"] = {}
+                
+                entiteiten_with_names_with_rechtspersoon_as_details.append(first_part)
+
+        return entiteiten_with_names_with_rechtspersoon_as_details
+
     def get_rechtspersoon_entiteiten(self, nummer, naam):
         query_builder = RechtspersoonLikeThisQueryBuilder()
         sql = query_builder.build_query(nummer=nummer, naam=naam)
