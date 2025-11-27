@@ -11,6 +11,19 @@ class DossiersDao:
             self._logger = logging.getLogger(self.__class__.__name__)
         return self._logger
     
+    def get_dossier_historiek_paged(self, page_size: int, last_id: int):
+        select_clause = "select top " + str(page_size) + " "
+        select_clause += "dh.ID, dh.IdDossier, dh.IdAard, dh.Info, dh.Datum, dh.InfoParket "
+        from_clause = "from kiss.tblDossierHistoriek dh "
+        where_clause = "where dh.ID > " + str(last_id) + " "
+        order_clause = "order by dh.ID";
+
+        sql = select_clause + from_clause + where_clause + order_clause
+        #self.logger.debug("SQL: %s", sql)
+        
+        result = database_instance.fetch_rows_with_column_names(sql)
+
+        return result
     def get_dossiers_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
         select_clause += "d.ID, d.Naam, d.Notitienummer, d.NotitienummerParket, d.IdTeam, d.IdMagistraat, d.IdBomMagistraat, d.IdScharnierMagistraat, "
