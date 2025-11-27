@@ -32,16 +32,14 @@ class DossiersDao:
                     JOIN kiss.tblGEBEURTENISSEN g ON g.id = r.IdGebeurtenis
                     JOIN kiss.tblDOCUMENTEN d ON d.id = g.iddocument
                     JOIN kiss.tblENTITEITEN e ON e.id = r.IdRelatieVan
-                WHERE d.iddossier NOT IN (1, 2, 4, 42)
-                    AND r.IdRelatieVan = {entiteit_id}
+                WHERE r.IdRelatieVan = {entiteit_id}
             UNION
             SELECT d.iddossier
                 FROM kiss.tblRELATIES r
                     JOIN kiss.tblGEBEURTENISSEN g ON g.id = r.IdGebeurtenis
                     JOIN kiss.tblDOCUMENTEN d ON d.id = g.iddocument
                     JOIN kiss.tblENTITEITEN e ON e.id = r.IdRelatieNaar
-                WHERE d.iddossier NOT IN (1, 2, 4, 42)
-                    AND r.IdRelatieNaar = {entiteit_id}
+                WHERE r.IdRelatieNaar = {entiteit_id}
         """
         self.logger.debug("SQL: %s", sql)
         result = database_instance.fetch_rows(sql)
