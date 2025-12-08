@@ -47,7 +47,7 @@ class SearchQueryBuilder:
             "WHERE c.DatumOUT <> \"1900-01-01\" AND c.IdDetail like '" + KissTools.convertCaseIDToKissDetail(case_id) + "%' "
         
         if self.__check_limited_to_team(badge_id):
-            teamId = str(get_team(badge_id))
+            teamId = str(self.__get_team(badge_id))
             sql = sql + " AND c.idRelatie->idgebeurtenis->idDocument->iddossier->idTeam = " + teamId
 
         sql = sql + " ORDER BY id DESC"
