@@ -3,7 +3,7 @@
 # Configuratievariabelen
 PRIVATE_KEY="/home/tom/.ssh/id_rsa_docker-host"
 SERVER_USER="docker"
-SERVER_IP="192.168.70.7"
+SERVER_IP="172.22.70.112"
 BRON_MAP="./app"
 DOEL_MAP="~/i2-kiss-api"
 

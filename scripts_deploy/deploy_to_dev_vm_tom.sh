@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuratievariabelen
-SERVER_IP="10.116.0.50"
+SERVER_IP="172.22.70.49"
 DOEL_MAP="/home/tom/deployed/i2-kiss-api"
 
 echo "Server IP: $SERVER_IP"
