@@ -11,6 +11,23 @@ class VragenRegisterDao:
             self._logger = logging.getLogger(self.__class__.__name__)
         return self._logger
     
+    def get_vragen_register_paged(self, page_size: int, last_id: int):
+        select_clause = "select top " + str(page_size) + " "
+        select_clause += "vr.Id, vr.IdVraag, vr.DatumIn, vr.IdAanvragerEenheid, vr.Aanvrager, vr.IdAard, vr.IdType, "
+        select_clause += "vr.IdOpdracht, vr.Inhoud, vr.DatumOut, vr.Terugroeping, vr.Goal, vr.IdBijlage, vr.IdStatus, "
+        select_clause += "vr.Referte, vr.IARead, vr.IAIntrest, vr.IdBestemmingEenheid, vr.Gevoelig, vr.IdVattingsEenheid, "
+        select_clause += "vr.DatumLaatsteWijziging "
+        from_clause = "from kiss.tblVRAGENREG vr "
+        where_clause = "where vr.Id > " + str(last_id) + " "
+        order_clause = "order by vr.Id";
+
+        sql = select_clause + from_clause + where_clause + order_clause
+        #self.logger.debug("SQL: %s", sql)
+        
+        result = database_instance.fetch_rows_with_column_names(sql)
+
+        return result
+
     def get_vragen_register_entiteiten_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
         select_clause += "vre.Id, vre.IdVraag, vre.IdEntiteit "
