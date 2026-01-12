@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 
+from dao.kiss_data_export.crimverslag_dao import CrimverslagDao
 from dao.kiss_data_export.crimverslag_entiteiten_dao import CrimverslagEntiteitenDao
 from routes.kiss_data_export.model.crimverslag_export_models import CrimverslagIdList
 import logging
@@ -8,6 +9,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+@router.get("/export/crimverslag")
+def get_crimverslag(
+    page_size: int = Query(..., description="Aantal records per batch"),
+    last_id: int = Query(..., description="Laatste ID uit vorige batch, of 0 voor de eerste batch"),
+):
+    crimverslag_dao = CrimverslagDao()
+
+    result = crimverslag_dao.get_crimverslag_paged(page_size=page_size, last_id=last_id)
+    #logger.debug(type(result))
+    #logger.debug(result)
+    
+    return JSONResponse(content=result)
 
 @router.get("/export/crimverslag/ids")
 def get_crimverslag_ids(
