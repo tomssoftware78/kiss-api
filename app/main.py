@@ -38,6 +38,7 @@ from routes.kiss_data_export.kiss_crimverslag_export_routes import router as kis
 from routes.kiss_sci_data_export.kiss_dossiers_export_routes import router as kiss_sci_data_export_dossiers_router
 from routes.kiss_sci_data_export.kiss_entiteit_export_routes import router as kiss_sci_data_export_entiteiten_router
 from routes.kiss_data_export.kiss_pic_export_routes import router as kiss_data_export_pic_router
+from routes.kiss_reftab_data_export.kiss_reftab_export_routes import router as kiss_reftab_data_export_router
 
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -104,6 +105,7 @@ app.include_router(kiss_data_export_crimverslag_router)
 app.include_router(kiss_sci_data_export_dossiers_router)
 app.include_router(kiss_sci_data_export_entiteiten_router)
 app.include_router(kiss_data_export_pic_router)
+app.include_router(kiss_reftab_data_export_router)
 
 app.middleware("http")(log_request)
 
