@@ -58,8 +58,8 @@ class DossiersDao:
 
     def get_gebeurtenissen_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "g.ID, g.IdDocument, g.RefGeb, g.DatumLaag, g.DatumHoog, g.JuistheidTijdstip, g.Inhoud, g.KorteInhoud, g.Restinfo, "
-        select_clause += "g.RestinfoValidatie, g.IAIntrest, g.OMARead, g.SyncId, g.InhoudAscii "
+        select_clause += "g.ID, g.IdDocument, g.RefGeb, g.DatumLaag, g.DatumHoog, g.JuistheidTijdstip, g.Restinfo, "
+        select_clause += "g.RestinfoValidatie, g.IAIntrest, g.OMARead, g.SyncId "
         from_clause = "from kiss.tblGEBEURTENISSEN g "
         where_clause = "where g.ID > " + str(last_id) + " "
         order_clause = "order by g.ID";
