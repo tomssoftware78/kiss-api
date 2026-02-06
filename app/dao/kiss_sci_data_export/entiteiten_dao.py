@@ -26,7 +26,7 @@ class SciEntiteitenDao:
     
     def get_entiteiten_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "e.ID, e.EntiteitVatting, e.Type, e.creatie, e.laatsteWijziging, e.gebruikerLaatsteWijziging, e.entIcoon "
+        select_clause += "e.ID, e.EntiteitVatting, e.Type "
         from_clause = "from kiss.tblCIDEntiteiten e "
         where_clause = "where e.ID > " + str(last_id) + " "
         order_clause = "order by e.ID";

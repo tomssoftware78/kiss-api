@@ -12,8 +12,7 @@ class SciRelatiesDao:
     
     def get_relaties_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "e.ID, e.IdCIDDocument, e.IdRelatieVan, e.ThemaVan, e.TeDoenVan, e.TeDoenVanOk, e.IdRelatieNaar, e.ThemaNaar, "
-        select_clause += "e.TeDoenNaar, e.TeDoenNaarOk, e.Label, e.IdRelatieType, e.DatumVatting, e.idRelatieRichting "
+        select_clause += "e.ID, e.IdCIDDocument, e.IdRelatieVan, e.IdRelatieNaar, e.Label, e.DatumVatting "
         from_clause = "from kiss.tblCIDRELATIES e "
         where_clause = "where e.ID > " + str(last_id) + " "
         order_clause = "order by e.ID";

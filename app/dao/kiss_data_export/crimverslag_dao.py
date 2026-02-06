@@ -13,10 +13,8 @@ class CrimverslagDao:
     
     def get_crimverslag_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "cv.ID, cv.Notitienummer, cv.Type, cv.Referte, cv.Aard, cv.Poging, cv.Eenheid, cv.PZ, cv.Arro, "
-        select_clause += "cv.DatumImport, cv.DatumCrimverslag, cv.DatumLaag, cv.DatumHoog, cv.Localisatie, cv.Postcode, "
-        select_clause += "cv.Gemeente, cv.Straat, cv.Huisnr, cv.Afgehandeld, cv.IARead, cv.IAIntrest, "
-        select_clause += "cv.teVerwijderen, cv.Koppeling, cv.RefGeb "
+        select_clause += "cv.ID, cv.Notitienummer, "
+        select_clause += "cv.DatumImport, cv.DatumCrimverslag, cv.DatumLaag, cv.DatumHoog "
         from_clause = "from kiss.tblCRIMVERSLAG cv "
         where_clause = "where cv.ID > " + str(last_id) + " "
         order_clause = "order by cv.ID";

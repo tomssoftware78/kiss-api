@@ -29,7 +29,7 @@ class EntiteitenDao:
 
     def get_entiteiten_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "e.ID, e.EntiteitVatting, e.Type, e.Icoon, e.oldIdKISS, e.creatie, e.laatsteWijziging, e.gebruikerLaatsteWijziging, e.entIcoon "
+        select_clause += "e.ID, e.EntiteitVatting, e.Type "
         from_clause = "from kiss.tblENTITEITEN e "
         where_clause = "where e.ID > " + str(last_id) + " "
         order_clause = "order by e.ID";

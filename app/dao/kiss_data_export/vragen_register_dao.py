@@ -13,10 +13,7 @@ class VragenRegisterDao:
     
     def get_vragen_register_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "vr.Id, vr.IdVraag, vr.DatumIn, vr.IdAanvragerEenheid, vr.Aanvrager, vr.IdAard, vr.IdType, "
-        select_clause += "vr.IdOpdracht, vr.Inhoud, vr.DatumOut, vr.Terugroeping, vr.Goal, vr.IdBijlage, vr.IdStatus, "
-        select_clause += "vr.Referte, vr.IARead, vr.IAIntrest, vr.IdBestemmingEenheid, vr.Gevoelig, vr.IdVattingsEenheid, "
-        select_clause += "vr.DatumLaatsteWijziging "
+        select_clause += "vr.Id, vr.IdVraag, vr.DatumIn, vr.DatumOut "
         from_clause = "from kiss.tblVRAGENREG vr "
         where_clause = "where vr.Id > " + str(last_id) + " "
         order_clause = "order by vr.Id";
