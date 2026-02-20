@@ -24,3 +24,31 @@ class PicDataDao:
         result = database_instance.fetch_rows_with_column_names(sql)
 
         return result
+    
+    def get_tel_tech_nrs(self, page_size: int, last_id: int):
+        #offset = (page - 1) * page_size
+        
+        select_clause = "select top " + str(page_size) + " "
+        select_clause += "%ID, Nummer, Info "
+        from_clause = "from kiss.picTelTechNrs "
+        where_clause = "where %ID > " + str(last_id) + " "
+        order_clause = "order by %ID"
+
+        sql = select_clause + from_clause + where_clause + order_clause
+
+        #sql = f"""
+        #    SELECT TOP {page_size} Nummer, Info
+        #    FROM KISS.picTelTechNrs
+        #    WHERE %ID NOT IN (
+        #        SELECT TOP {offset} %ID
+        #        FROM KISS.picTelTechNrs
+        #        ORDER BY Nummer, %ID
+        #    )
+        #    ORDER BY Nummer, %ID
+        #    """
+        
+        self.logger.debug("SQL: %s", sql)
+        
+        result = database_instance.fetch_rows_with_column_names(sql)
+
+        return result

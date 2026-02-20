@@ -21,3 +21,16 @@ def get_dossiers(
     #logger.debug(result)
     
     return JSONResponse(content=result)
+
+@router.get("/export/pic/teltechnrs")
+def get_picTelTechNrs(
+    page_size: int = Query(..., description="Aantal records per batch"),
+    last_id: int = Query(..., description="Laatste IdEntiteit uit vorige batch, of 0 voor de eerste batch")
+):
+    pic_data_dao = PicDataDao()
+
+    result = pic_data_dao.get_tel_tech_nrs(page_size=page_size, last_id=last_id)
+    #logger.debug(type(result))
+    #logger.debug(result)
+    
+    return JSONResponse(content=result)
