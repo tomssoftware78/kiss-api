@@ -26,7 +26,7 @@ class DossiersDao:
         return result
     def get_dossiers_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "d.ID, d.Naam, d.Notitienummer, d.NotitienummerParket, d.IdAardDossier, d.IdTypeDossier "
+        select_clause += "d.ID, d.Naam, d.Notitienummer, d.NotitienummerParket, d.IdAardDossier, d.IdTypeDossier, d.IdEenheid "
         from_clause = "from kiss.tblDOSSIERS d "
         where_clause = "where d.ID > " + str(last_id) + " "
         order_clause = "order by d.ID";
