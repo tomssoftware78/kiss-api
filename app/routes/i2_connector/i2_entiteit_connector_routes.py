@@ -107,6 +107,19 @@ def expand_entiteit(request: Request, id: str = Query(...)):
 
     return JSONResponse(content=result)
 
+@router.get("/entiteit/get")
+def get_entiteit(request: Request, id: str = Query(...)):
+    logger.debug('/entiteit/get')
+
+    client_ip = request.client.host
+    query_params = dict(request.query_params)
+    logging.info(f"Request received from {client_ip} with parameters: {query_params}")
+
+    entiteiten_service = EntiteitenService()
+    result = entiteiten_service.get_entiteit(id=id)
+
+    return JSONResponse(content=result)
+
 @router.get("/entiteit/dossiers")
 def get_dossiers_for_entiteit(request: Request, id: str = Query(...)):
     logger.debug('/entiteit/dossiers')

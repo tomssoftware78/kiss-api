@@ -88,6 +88,8 @@ class EntiteitenService:
 
         return result  
 
+    def get_entiteit(self, id=id):
+        return self.entiteiten_dao.get_entiteit_generic_data(entiteitId=id)    
 
     def expand_entiteit(self, id=id):
         relaties = self.relaties_dao.get_relaties_with_entiteiten(entiteitId=id)
