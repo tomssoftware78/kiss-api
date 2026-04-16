@@ -189,3 +189,5 @@ fabric.properties
 *.log.*
 __pycache__/
 *.pyc
+
+.vscode/settings.json
