@@ -87,91 +87,47 @@ class EntiteitenDao:
         return entiteiten_with_names_with_persoon_as_details
 
     def get_entiteiten_by_vatting(self, vatting, type):
-        select_clause = "select ent.* "
-        from_clause = "from kiss.tblENTITEITEN ent "
-        where_clause = "where ent.EntiteitVatting like '%" + vatting + "%'"
-
+        types = []
         if type and type.lower() != 'none':
-            where_clause += "and ent.type = " + type
+            types.append(int(type))
+        else:
+            types = [1, 2, 3, 4, 5, 6, 7]
 
-        sql = select_clause + from_clause + where_clause
-        self.logger.debug("SQL: %s", sql)
+
+        result = []
+        for t in types:    
+            sub_table = kiss_db_table_mapping.entiteit_table_mapping[t]['tabel']
+            prefix_sub_table = "sub_ent"
+            column_names_sub_table = kiss_db_table_mapping.entiteit_table_mapping[t]["details"]
+            select_sub_part = ", ".join(f"{prefix_sub_table}.{veld}" for veld in column_names_sub_table)
+
+            print(select_sub_part)
+
+            select_clause = "select ent.ID, ent.EntiteitVatting, ent.Type as entType, ent.Icoon, ent.oldIdKISS, ent.creatie, ent.laatsteWijziging, "
+            select_clause = select_clause + "ent.gebruikerLaatsteWijziging, ent.entIcoon, " + select_sub_part + " "
+            from_clause = "from kiss.tblENTITEITEN ent "
+            from_clause = from_clause + "left outer join " + sub_table + " " + prefix_sub_table + " "
+            from_clause = from_clause + "on sub_ent.IdEntiteit = ent.ID "
+            where_clause = "where ent.EntiteitVatting like '%" + vatting + "%' "
+            where_clause += "and sub_ent.IdEntiteit is not null"
+
+            sql = select_clause + from_clause + where_clause
+            self.logger.debug("SQL: %s", sql)
+
+            entiteiten_with_names = database_instance.fetch_rows_with_column_names(sql)
         
-        entiteiten_with_names = database_instance.fetch_rows_with_column_names(sql)
-        entiteit_ids_for_details = {
-            1: [], #persoon
-            2: [], #voertuig
-            3: [], #location
-            4: [], #nummer
-            5: [], #voorwerp
-            6: [], #rechtspersoon
-            7: [] #Feit
-        }
-
-        for r in entiteiten_with_names:
-            #self.logger.debug(r)
-            #self.logger.debug(r['Type'])
-            entiteit_ids_for_details[r['Type']].append(r['ID'])
-
-
-        details_in_sub = {
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: [],
-            6: [],
-            7: []
-        }
-        for s in entiteit_ids_for_details:
-            if len(entiteit_ids_for_details[s]) > 0:
-                sql = "select * from " + kiss_db_table_mapping.entiteit_table_mapping[s]['tabel']
-                sql = sql + " where IdEntiteit in (" + ", ".join(str(x) for x in (entiteit_ids_for_details[s])) + ")"
-
-                self.logger.debug("SQL: %s", sql)
-                sub_result_with_names = database_instance.fetch_rows_with_column_names(sql)
-                details_in_sub[s] = sub_result_with_names
-
-                #self.logger.debug(sub_result_with_names)
-
-
-        indexes_in_sub = {
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
-            6: 0,
-            7: 0
-        }
         
-        for r in entiteiten_with_names:
-            k = r['Type']
 
-            index_in_sub = indexes_in_sub[k]
+            if entiteiten_with_names:
+                for r in entiteiten_with_names:
+                    r["details"] = {}
 
-            details = details_in_sub[k][index_in_sub]
-            details['Type'] = r['Type']
+                    for key in kiss_db_table_mapping.entiteit_table_mapping[t]['details']:
+                        r["details"][key] = r.pop(key)
 
-            r['details'] = details
-
-            index_in_sub+= 1
-            indexes_in_sub[k] = index_in_sub
-
-
-        #self.logger.debug(entiteit_ids_for_details)
-        #self.logger.debug(entiteiten_with_names)    
-        #this for loop is just debugging info 
-        for r in entiteiten_with_names:
-            id = r['ID']
-            if not r['details']:
-                print('entiteit with id', id, 'has no details found')
-            else:
-                details = r['details']
-                if details['IdEntiteit'] != id:
-                    print('id ', id, 'is not equal to ', details['IdEntiteit'])
-            
-        return entiteiten_with_names
+                    r["Type"] = r.pop("entType")
+                    result.append(r)
+        return result
     
     def get_entiteit_generic_data(self, entiteitId):
         select_clause = "select * "
