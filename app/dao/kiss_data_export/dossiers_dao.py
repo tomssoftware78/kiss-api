@@ -40,7 +40,7 @@ class DossiersDao:
 
     def get_documenten_paged(self, page_size: int, last_id: int):
         select_clause = "select top " + str(page_size) + " "
-        select_clause += "d.ID, d.IdDossier, d.IdEenheid, d.IdAardDocument "
+        select_clause += "d.ID, d.IdDossier, d.IdEenheid, d.IdAardDocument, d.Onderwerp "
         from_clause = "from kiss.tblDOCUMENTEN d "
         where_clause = "where d.ID > " + str(last_id) + " "
         order_clause = "order by d.ID";
